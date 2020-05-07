@@ -57,7 +57,6 @@ namespace fbtool
 
         private async Task addProfileAsync()
         {
-            var firebase = new FirebaseClient("https://fbtool-e0efc.firebaseio.com/");
             await firebase
               .Child("profile/server1")
               .PostAsync(new Profile("Profile 1", "Hường Dương"));
