@@ -50,11 +50,6 @@ namespace fbtool
             dgProfile.ItemsSource = profiles;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            chromeDriver.Quit();
-        }
-
         private async Task addProfileAsync()
         {
             await firebase
