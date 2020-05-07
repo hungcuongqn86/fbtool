@@ -15,6 +15,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using Firebase.Database;
+using Firebase.Database.Query;
+using fbtool.Model;
 
 namespace fbtool
 {
@@ -23,10 +26,28 @@ namespace fbtool
     /// </summary>
     public partial class MainWindow : Window
     {
+        FirebaseClient firebase;
         ChromeDriver chromeDriver;
         public MainWindow()
         {
             InitializeComponent();
+            firebase = new FirebaseClient("https://fbtool-e0efc.firebaseio.com/", new FirebaseOptions
+            {
+                AuthTokenAsyncFactory = () => Task.FromResult("lVOdDXogb8edtJdoVW1moAw6MjjUo7obcEQrIJSW")
+            });
+            LoadProfile().ContinueWith(task => { /* do some other stuff */ },
+                TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async Task LoadProfile()
+        {
+            var profileData = await firebase.Child("profile/server1").OrderByKey().OnceAsync<Profile>();
+            List<Profile> profiles = new List<Profile>();
+            foreach (var profile in profileData)
+            {
+                profiles.Add(profile.Object);
+            }
+            dgProfile.ItemsSource = profiles;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -34,12 +55,25 @@ namespace fbtool
             chromeDriver.Quit();
         }
 
-        private void Button_Next_Click(object sender, RoutedEventArgs e)
+        private async Task addProfileAsync()
         {
-            KillChrome();
+            var firebase = new FirebaseClient("https://fbtool-e0efc.firebaseio.com/");
+            await firebase
+              .Child("profile/server1")
+              .PostAsync(new Profile("Profile 1", "Hường Dương"));
+        }
+
+        private void openProfile(object sender, RoutedEventArgs e)
+        {
+            Profile profile = ((FrameworkElement)sender).DataContext as Profile;
+            if (chromeDriver != null)
+            {
+                chromeDriver.Quit();
+            }
+            // KillChrome();
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--user-data-dir=C:\\Users\\hungc\\AppData\\Local\\Google\\Chrome\\User Data");
-            options.AddArgument("profile-directory=Profile 1");
+            options.AddArgument("profile-directory=" + profile.Path);
             options.AddArgument("disable-infobars");
             options.AddArgument("--disable-extensions");
             options.AddArgument("--start-maximized");

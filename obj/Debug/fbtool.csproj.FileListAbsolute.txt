@@ -21,7 +21,6 @@ D:\App\FBTOOL\facebooktool\bin\Debug\fbtool.exe
 D:\App\FBTOOL\facebooktool\bin\Debug\fbtool.pdb
 D:\App\FBTOOL\facebooktool\bin\Debug\WebDriver.dll
 D:\App\FBTOOL\facebooktool\bin\Debug\WebDriver.xml
-D:\App\FBTOOL\facebooktool\obj\Debug\fbtool.csprojAssemblyReference.cache
 D:\App\FBTOOL\facebooktool\obj\Debug\MainWindow.g.cs
 D:\App\FBTOOL\facebooktool\obj\Debug\App.g.cs
 D:\App\FBTOOL\facebooktool\obj\Debug\fbtool_MarkupCompile.cache
@@ -34,3 +33,13 @@ D:\App\FBTOOL\facebooktool\obj\Debug\fbtool.csproj.CoreCompileInputs.cache
 D:\App\FBTOOL\facebooktool\obj\Debug\fbtool.csproj.CopyComplete
 D:\App\FBTOOL\facebooktool\obj\Debug\fbtool.exe
 D:\App\FBTOOL\facebooktool\obj\Debug\fbtool.pdb
+D:\App\FBTOOL\facebooktool\bin\Debug\Firebase.dll
+D:\App\FBTOOL\facebooktool\bin\Debug\LiteDB.dll
+D:\App\FBTOOL\facebooktool\bin\Debug\Newtonsoft.Json.dll
+D:\App\FBTOOL\facebooktool\bin\Debug\System.Reactive.dll
+D:\App\FBTOOL\facebooktool\bin\Debug\Firebase.xml
+D:\App\FBTOOL\facebooktool\bin\Debug\LiteDB.xml
+D:\App\FBTOOL\facebooktool\bin\Debug\Newtonsoft.Json.xml
+D:\App\FBTOOL\facebooktool\bin\Debug\System.Reactive.xml
+D:\App\FBTOOL\facebooktool\obj\Debug\App.baml
+D:\App\FBTOOL\facebooktool\obj\Debug\Resources\Style.baml
