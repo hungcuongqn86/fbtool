@@ -19,16 +19,24 @@ using Firebase.Database;
 using Firebase.Database.Query;
 using fbtool.Model;
 using System.Reactive.Linq;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace fbtool
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : INotifyPropertyChanged
     {
         FirebaseClient firebase;
         ChromeDriver chromeDriver;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        ObservableCollection<Link> _returnedLinks = new ObservableCollection<Link>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -38,6 +46,7 @@ namespace fbtool
             });
             LoadProfile();
             LoadLink();
+            dgLink.ItemsSource = _returnedLinks;
         }
 
         private void LoadProfile()
@@ -48,33 +57,46 @@ namespace fbtool
 
         private void LoadLink()
         {
+            _returnedLinks.Clear();
             var child = firebase.Child("link");
             var observable = child.AsObservable<Link>();
-
             var subscription = observable
-                .Where(f => !string.IsNullOrEmpty(f.Key))
-                .Where(f => f.Object?.Status != 1)
+                .Where(f => !string.IsNullOrEmpty(f.Key)).ObserveOn(SynchronizationContext.Current)
                 .Subscribe(f => {
-                    Console.WriteLine($"{f.Object.Url}: {f.Object.Status} : {f.EventType}");
-                    /*List<Link> links = new List<Link>();
-                    foreach (var profile in profileData)
+                    if (f.EventType == Firebase.Database.Streaming.FirebaseEventType.Delete)
                     {
-                        profiles.Add(profile.Object);
-                    }*/
+                        // record deleted - remove from ObservableCollection
+                        _returnedLinks.Remove(f.Object);
+                    }
+
+                    if (f.EventType == Firebase.Database.Streaming.FirebaseEventType.InsertOrUpdate)
+                    {
+                        // see if the inserted/updated object is already in our ObservableCollection
+                        var found = _returnedLinks.FirstOrDefault(i => i.Url == f.Object.Url);
+                        if (found == null)
+                        {
+                            //  is NOT in the observableCollection - add it
+                            if (f.Object.Status == 0)
+                            {
+                                _returnedLinks.Add(f.Object);
+                            }
+                        }
+                        else
+                        {
+                            int tempIndex = _returnedLinks.IndexOf(found);
+                            // event was updated 
+                            if (f.Object.Status == 0)
+                            {
+                                _returnedLinks[tempIndex] = f.Object;
+                            }
+                            else
+                            {
+                                _returnedLinks.Remove(f.Object);
+                            }
+                        }
+                    }
                 });
             // subscription.Dispose();
-
-        }
-
-        private async Task LoadLinkData()
-        {
-            var linkData = await firebase.Child("link").OrderByKey().OnceAsync<Link>();
-            List<Link> links = new List<Link>();
-            foreach (var link in linkData)
-            {
-                links.Add(link.Object);
-            }
-            dgLink.ItemsSource = links;
         }
 
         private async void mnuNewProfile_Click(object sender, RoutedEventArgs e)
