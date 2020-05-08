@@ -6,19 +6,41 @@
         xmlns:local="clr-namespace:fbtool"
         mc:Ignorable="d"
         Title="FacebookTool" Height="450" Width="800">
-    <Grid>
-        <DataGrid Name="dgProfile" AutoGenerateColumns="False" CanUserAddRows="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Facebook" Binding="{Binding Facebook}" />
-                <DataGridTextColumn Header="Profile" Binding="{Binding Path}" />
-                <DataGridTemplateColumn Header="#">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Click="openProfile">Open</Button>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Profile">
+                <MenuItem Header="_Thêm" Click="mnuNewProfile_Click"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Link">
+                <MenuItem Header="_Thêm" Click="mnuNewLink_Click"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <DataGrid Grid.Column="0" Name="dgProfile" AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Facebook" Binding="{Binding Facebook}" />
+                    <DataGridTextColumn Header="Profile" Binding="{Binding Path}" />
+                    <DataGridTemplateColumn Header="#">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Click="openProfile">Open</Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <DataGrid Grid.Column="1" Name="dgLink" AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Link" Binding="{Binding Url}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </DockPanel>
 </Window>
