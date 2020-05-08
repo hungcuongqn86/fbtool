@@ -37,6 +37,8 @@ namespace fbtool
 
         ObservableCollection<Link> _returnedLinks = new ObservableCollection<Link>();
 
+        ObservableCollection<Profile> _returnedProfiles = new ObservableCollection<Profile>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -47,12 +49,44 @@ namespace fbtool
             LoadProfile();
             LoadLink();
             dgLink.ItemsSource = _returnedLinks;
+            dgProfile.ItemsSource = _returnedProfiles;
         }
 
         private void LoadProfile()
         {
             var profileData = firebase.Child("profile/server1").AsObservable<Profile>();
             dgProfile.ItemsSource = profileData.ObserveOnDispatcher().AsObservableCollection();
+
+            _returnedProfiles.Clear();
+            var child = firebase.Child("profile/server1");
+            var observable = child.AsObservable<Profile>();
+            var subscription = observable
+                .Where(f => !string.IsNullOrEmpty(f.Key)).ObserveOn(SynchronizationContext.Current)
+                .Subscribe(f => {
+                    if (f.EventType == Firebase.Database.Streaming.FirebaseEventType.Delete)
+                    {
+                        // record deleted - remove from ObservableCollection
+                        _returnedProfiles.Remove(f.Object);
+                    }
+
+                    if (f.EventType == Firebase.Database.Streaming.FirebaseEventType.InsertOrUpdate)
+                    {
+                        // see if the inserted/updated object is already in our ObservableCollection
+                        var found = _returnedProfiles.FirstOrDefault(i => i.Path == f.Object.Path);
+                        if (found == null)
+                        {
+                            //  is NOT in the observableCollection - add it
+                            _returnedProfiles.Add(f.Object);
+                        }
+                        else
+                        {
+                            int tempIndex = _returnedProfiles.IndexOf(found);
+                            // event was updated 
+                            _returnedProfiles[tempIndex] = f.Object;
+                        }
+                    }
+                });
+            // subscription.Dispose();
         }
 
         private void LoadLink()
