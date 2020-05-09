@@ -8,15 +8,16 @@
         Title="FacebookTool" Height="450" Width="800">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_System">
+                <MenuItem Header="_Setting" Click="serverNameMenuItem_Click"></MenuItem>
+                <MenuItem Header="_Exit" Click="exitLink_Click"></MenuItem>
+            </MenuItem>
             <MenuItem Header="_Profile">
-                <MenuItem Header="_Thêm" Click="mnuNewProfile_Click"></MenuItem>
+                <MenuItem Header="_Add" Click="mnuNewProfile_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Link">
-                <MenuItem Header="_Thêm" Click="mnuNewLink_Click"></MenuItem>
-            </MenuItem>
-            <MenuItem Header="_Config">
-                <MenuItem Header="_Server Name" Click="serverNameMenuItem_Click"></MenuItem>
-                <MenuItem Header="_Profile Path" Click="mnuNewLink_Click"></MenuItem>
+                <MenuItem Header="_Add" Click="mnuNewLink_Click"></MenuItem>
+                <MenuItem Header="_Import"></MenuItem>
             </MenuItem>
         </Menu>
         <Grid>

@@ -55,10 +55,10 @@ namespace fbtool.DialogBox
             {
                 UpdateConfigKey("ServerName", Settingbd.ServerName);
             }
-            else
+
+            if (!string.IsNullOrEmpty(Settingbd.ProfilePath))
             {
-                MessageBox.Show("Setting lỗi.");
-                return;
+                UpdateConfigKey("ProfilePath", Settingbd.ProfilePath);
             }
 
             // Dialog box accepted

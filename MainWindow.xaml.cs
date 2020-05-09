@@ -213,5 +213,10 @@ namespace fbtool
                 System.Windows.Application.Current.Shutdown();
             }
         }
+
+        private void exitLink_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
     }
 }
