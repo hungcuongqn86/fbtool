@@ -24,18 +24,23 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Configuration;
 using System.Xml;
+using fbtool.DialogBox;
 
 namespace fbtool
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : INotifyPropertyChanged
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         FirebaseClient firebase;
         ChromeDriver chromeDriver;
 
         public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         ObservableCollection<Link> _returnedLinks = new ObservableCollection<Link>();
 
@@ -186,6 +191,27 @@ namespace fbtool
             foreach (Process item in processNames)
             {
                 item.Kill();
+            }
+        }
+
+        private void serverNameMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
+            // Instantiate the dialog box
+            var dlg = new ServerNameSetting
+            {
+                Owner = this,
+                ServerName = serverName
+            };
+
+            // Configure the dialog box
+
+            // Open the dialog box modally 
+            dlg.ShowDialog();
+            if (dlg.DialogResult == true)
+            {
+                // Update
+                MessageBox.Show(dlg.ServerName);
             }
         }
 

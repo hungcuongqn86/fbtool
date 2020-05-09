@@ -15,7 +15,7 @@
                 <MenuItem Header="_Thêm" Click="mnuNewLink_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Config">
-                <MenuItem Header="_Server Name" Click="mnuNewLink_Click"></MenuItem>
+                <MenuItem Header="_Server Name" Click="serverNameMenuItem_Click"></MenuItem>
                 <MenuItem Header="_Profile Path" Click="mnuNewLink_Click"></MenuItem>
             </MenuItem>
         </Menu>

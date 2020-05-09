@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\App\FBTOOL\facebooktool\App.xaml
-2-1193045053
+3-2007499699
 
-8-1853595767
+10-548848543
 23-1425674924
-MainWindow.xaml;Resources\Style.xaml;
+DialogBox\ServerNameSetting.xaml;MainWindow.xaml;Resources\Style.xaml;
 
 True
 
