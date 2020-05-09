@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,7 @@ using System.Threading;
 using System.Configuration;
 using System.Xml;
 using fbtool.DialogBox;
+using OpenQA.Selenium.Support.UI;
 
 namespace fbtool
 {
@@ -197,6 +199,90 @@ namespace fbtool
             chromeDriver = new ChromeDriver(options);
             chromeDriver.Url = "https://www.facebook.com/";
             chromeDriver.Navigate();
+        }
+
+        private void accessLink(object sender, RoutedEventArgs e)
+        {
+            Profile profile = ((FrameworkElement)sender).DataContext as Profile;
+            if (chromeDriver != null)
+            {
+                chromeDriver.Quit();
+            }
+            KillChrome();
+
+            ChromeOptions options = new ChromeOptions();
+            string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
+            options.AddArgument("--user-data-dir=" + profilePath);
+            options.AddArgument("profile-directory=" + profile.Path);
+            options.AddArgument("disable-infobars");
+            options.AddArgument("--disable-extensions");
+            options.AddArgument("--start-maximized");
+            chromeDriver = new ChromeDriver(options);
+            chromeDriver.Url = profile.Facebook;
+            chromeDriver.Navigate();
+
+            // wait login
+            WebDriverWait waitLogin = new WebDriverWait(chromeDriver, TimeSpan.FromMinutes(1));
+            Func<IWebDriver, bool> waitForLogin = new Func<IWebDriver, bool>((IWebDriver Web) =>
+            {
+                Console.WriteLine("Waiting for login Facebook");
+                IWebElement parent1 = Web.FindElement(By.Id("u_0_a"));
+                IWebElement element = parent1.FindElement(By.XPath("div[contains(@class, '_cy6')]/div[contains(@class, '_4kny')]/div[contains(@class, '_cy7')]/a"));
+                if (element.GetAttribute("href").Equals(profile.Facebook))
+                {
+                    return true;
+                }
+                return false;
+            });
+            waitLogin.Until(waitForLogin);
+            // MessageBox.Show("login!");
+
+            // Open link
+            chromeDriver.Navigate().GoToUrl(_returnedLinks.First().Url);
+
+            // wait load input
+            WebDriverWait waitInputFullName = new WebDriverWait(chromeDriver, TimeSpan.FromMinutes(1));
+            Func<IWebDriver, bool> waitForInputFullName = new Func<IWebDriver, bool>((IWebDriver Web) =>
+            {
+                Console.WriteLine("Waiting for load input");
+                IWebElement element = Web.FindElement(By.Name("fullName"));
+                if (element.GetAttribute("class").Equals("_58al"))
+                {
+                    return true;
+                }
+                return false;
+            });
+            waitInputFullName.Until(waitForInputFullName);
+            // MessageBox.Show("load input!");
+
+            // Input full name
+            String fullName = "A " + GetRandomAlphaNumeric();
+            chromeDriver.FindElement(By.Name("fullName")).SendKeys(fullName);
+
+            // wait button enable
+            WebDriverWait waitContBtnEnable = new WebDriverWait(chromeDriver, TimeSpan.FromMinutes(1));
+            Func<IWebDriver, bool> waitForContBtnEnable = new Func<IWebDriver, bool>((IWebDriver Web) =>
+            {
+                Console.WriteLine("Waiting for enable cont button");
+                IWebElement parent = Web.FindElement(By.TagName("button"));
+                IWebElement element = parent.FindElement(By.XPath("div[@class='_43rl']/div[@class='_43rm']"));
+                if (parent.GetAttribute("aria-disabled").Equals("false"))
+                {
+                    return true;
+                }
+                return false;
+            });
+            waitContBtnEnable.Until(waitForContBtnEnable);
+            // MessageBox.Show("button enable!");
+
+            // Click button
+            var button = chromeDriver.FindElement(By.TagName("button"));
+            button.Click();
+        }
+
+        private string GetRandomAlphaNumeric()
+        {
+            return System.IO.Path.GetRandomFileName().Replace(".", "").Substring(0, 8);
         }
 
         private void KillChrome()
