@@ -162,14 +162,20 @@ namespace fbtool
 
         private async void mnuNewLink_Click(object sender, RoutedEventArgs e)
         {
-            await addLinkAsync();
-        }
+            // Instantiate the dialog box
+            var dlg = new AddLink
+            {
+                Owner = this
+            };
 
-        private async Task addLinkAsync()
-        {
-            await firebase
-              .Child("link")
-              .PostAsync(new Link("https://fb.me/1L99yBeX1EvzH7L", 0, ""));
+            // Open the dialog box modally 
+            dlg.ShowDialog();
+            if (dlg.DialogResult == true)
+            {
+                await firebase
+                    .Child("link")
+                    .PostAsync(new Link(dlg.Linkbd.Url, 0, ""));
+            }
         }
 
         private void openProfile(object sender, RoutedEventArgs e)

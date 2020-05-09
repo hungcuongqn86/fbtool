@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace fbtool.Model
 {
-    class Link
+    public class Link
     {
         public String Url { get; set; }
         public int Status { get; set; }
