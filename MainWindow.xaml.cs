@@ -58,11 +58,9 @@ namespace fbtool
 
         private void LoadProfile()
         {
-            var profileData = firebase.Child("profile/server1").AsObservable<Profile>();
-            dgProfile.ItemsSource = profileData.ObserveOnDispatcher().AsObservableCollection();
-
+            string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
             _returnedProfiles.Clear();
-            var child = firebase.Child("profile/server1");
+            var child = firebase.Child("profile/" + serverName);
             var observable = child.AsObservable<Profile>();
             var subscription = observable
                 .Where(f => !string.IsNullOrEmpty(f.Key)).ObserveOn(SynchronizationContext.Current)
@@ -171,7 +169,8 @@ namespace fbtool
             KillChrome();
 
             ChromeOptions options = new ChromeOptions();
-            options.AddArgument("--user-data-dir=C:\\Users\\hungc\\AppData\\Local\\Google\\Chrome\\User Data");
+            string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
+            options.AddArgument("--user-data-dir=" + profilePath);
             options.AddArgument("profile-directory=" + profile.Path);
             options.AddArgument("disable-infobars");
             options.AddArgument("--disable-extensions");
