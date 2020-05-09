@@ -1,6 +1,8 @@
-﻿using System;
+﻿using fbtool.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml;
 
 namespace fbtool.DialogBox
 {
@@ -23,6 +26,10 @@ namespace fbtool.DialogBox
         public ServerNameSetting()
         {
             InitializeComponent();
+            string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
+            string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
+            Settingbd = new Setting { ServerName = serverName, ProfilePath = profilePath };
+            this.DataContext = Settingbd;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -31,20 +38,7 @@ namespace fbtool.DialogBox
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private string _serverName = "12121";
-
-        public string ServerName
-        {
-            get { return _serverName; }
-            set
-            {
-                if (value != _serverName)
-                {
-                    _serverName = value;
-                    OnPropertyChanged("ServerName");
-                }
-            }
-        }
+        public Setting Settingbd;
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
         {
@@ -56,6 +50,16 @@ namespace fbtool.DialogBox
         {
             // Don't accept the dialog box if there is invalid data
             if (!IsValid(this)) return;
+
+            if (!string.IsNullOrEmpty(Settingbd.ServerName))
+            {
+                UpdateConfigKey("ServerName", Settingbd.ServerName);
+            }
+            else
+            {
+                MessageBox.Show("Setting lỗi.");
+                return;
+            }
 
             // Dialog box accepted
             DialogResult = true;
@@ -83,6 +87,40 @@ namespace fbtool.DialogBox
             return LogicalTreeHelper.GetChildren(node).OfType<DependencyObject>().All(IsValid);
 
             // All dependency objects are valid
+        }
+
+        public void UpdateConfigKey(string strKey, string newValue)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config");
+
+            if (!ConfigKeyExists(strKey))
+            {
+                throw new ArgumentNullException("Key", "<" + strKey + "> not find in the configuration.");
+            }
+            XmlNode appSettingsNode = xmlDoc.SelectSingleNode("configuration/appSettings");
+            foreach (XmlNode childNode in appSettingsNode)
+            {
+                if (childNode.Attributes["key"].Value == strKey)
+                    childNode.Attributes["value"].Value = newValue;
+            }
+
+            xmlDoc.Save(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config");
+            xmlDoc.Save(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            MessageBox.Show("Setting thành công!");
+        }
+
+        public bool ConfigKeyExists(string strKey)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config");
+            XmlNode appSettingsNode = xmlDoc.SelectSingleNode("configuration/appSettings");
+            foreach (XmlNode childNode in appSettingsNode)
+            {
+                if (childNode.Attributes["key"].Value == strKey)
+                    return true;
+            }
+            return false;
         }
     }
 }

@@ -53,14 +53,7 @@
 
         <!-- Server Name -->
         <Label Grid.Column="0" Grid.Row="0">Server Name:</Label>
-        <TextBox Name="ServerNameTextBox" Grid.Column="1" Grid.Row="0">
-            <TextBox.Text>
-                <Binding Path="ServerName" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                    <!-- <Binding.ValidationRules>
-                        <local:SettingValidationRule MinMargin="0" MaxMargin="10" />
-                    </Binding.ValidationRules> -->
-                </Binding>
-            </TextBox.Text>
+        <TextBox Name="ServerNameTextBox" Grid.Column="1" Grid.Row="0" Text="{Binding ServerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
 
         <!-- Accept or Cancel -->

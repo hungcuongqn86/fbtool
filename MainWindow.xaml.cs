@@ -196,77 +196,22 @@ namespace fbtool
 
         private void serverNameMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
             // Instantiate the dialog box
             var dlg = new ServerNameSetting
             {
-                Owner = this,
-                ServerName = serverName
+                Owner = this
             };
-
-            // Configure the dialog box
 
             // Open the dialog box modally 
             dlg.ShowDialog();
             if (dlg.DialogResult == true)
             {
                 // Update
-                MessageBox.Show(dlg.ServerName);
+                MessageBox.Show("Tool sẽ khởi động lại!");
+                KillChrome();
+                System.Windows.Forms.Application.Restart();
+                System.Windows.Application.Current.Shutdown();
             }
-        }
-
-        /*private void Button_Click(object sender, RoutedEventArgs e)
-
-        {
-
-            if (!string.IsNullOrEmpty(textBoxCountry.Text))
-
-            {
-
-                UpdateConfigKey("Country", textBoxCountry.Text);
-
-                textBoxCountry.Text = string.Empty;
-
-            }
-
-            else
-
-                MessageBox.Show("Please type some value.");
-
-        }*/
-
-        public void UpdateConfigKey(string strKey, string newValue)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config");
-
-            if (!ConfigKeyExists(strKey))
-            {
-                throw new ArgumentNullException("Key", "<" + strKey + "> not find in the configuration.");
-            }
-            XmlNode appSettingsNode = xmlDoc.SelectSingleNode("configuration/appSettings");
-            foreach (XmlNode childNode in appSettingsNode)
-            {
-                if (childNode.Attributes["key"].Value == strKey)
-                    childNode.Attributes["value"].Value = newValue;
-            }
-
-            xmlDoc.Save(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config");
-            xmlDoc.Save(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-            MessageBox.Show("Key Upated Successfullly");
-        }
-
-        public bool ConfigKeyExists(string strKey)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config");
-            XmlNode appSettingsNode = xmlDoc.SelectSingleNode("configuration/appSettings");
-            foreach (XmlNode childNode in appSettingsNode)
-            {
-                if (childNode.Attributes["key"].Value == strKey)
-                return true;
-            }
-            return false;
         }
     }
 }
