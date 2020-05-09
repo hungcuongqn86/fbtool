@@ -22,6 +22,8 @@ using System.Reactive.Linq;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Threading;
+using System.Configuration;
+using System.Xml;
 
 namespace fbtool
 {
@@ -42,9 +44,11 @@ namespace fbtool
         public MainWindow()
         {
             InitializeComponent();
-            firebase = new FirebaseClient("https://fbtool-e0efc.firebaseio.com/", new FirebaseOptions
+            string firebaseUrl = ConfigurationManager.AppSettings["FirebaseUrl"].ToString();
+            string firebaseSecretKey = ConfigurationManager.AppSettings["FirebaseSecretKey"].ToString();
+            firebase = new FirebaseClient(firebaseUrl, new FirebaseOptions
             {
-                AuthTokenAsyncFactory = () => Task.FromResult("lVOdDXogb8edtJdoVW1moAw6MjjUo7obcEQrIJSW")
+                AuthTokenAsyncFactory = () => Task.FromResult(firebaseSecretKey)
             });
             LoadProfile();
             LoadLink();
@@ -184,6 +188,60 @@ namespace fbtool
             {
                 item.Kill();
             }
+        }
+
+        /*private void Button_Click(object sender, RoutedEventArgs e)
+
+        {
+
+            if (!string.IsNullOrEmpty(textBoxCountry.Text))
+
+            {
+
+                UpdateConfigKey("Country", textBoxCountry.Text);
+
+                textBoxCountry.Text = string.Empty;
+
+            }
+
+            else
+
+                MessageBox.Show("Please type some value.");
+
+        }*/
+
+        public void UpdateConfigKey(string strKey, string newValue)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config");
+
+            if (!ConfigKeyExists(strKey))
+            {
+                throw new ArgumentNullException("Key", "<" + strKey + "> not find in the configuration.");
+            }
+            XmlNode appSettingsNode = xmlDoc.SelectSingleNode("configuration/appSettings");
+            foreach (XmlNode childNode in appSettingsNode)
+            {
+                if (childNode.Attributes["key"].Value == strKey)
+                    childNode.Attributes["value"].Value = newValue;
+            }
+
+            xmlDoc.Save(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config");
+            xmlDoc.Save(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            MessageBox.Show("Key Upated Successfullly");
+        }
+
+        public bool ConfigKeyExists(string strKey)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config");
+            XmlNode appSettingsNode = xmlDoc.SelectSingleNode("configuration/appSettings");
+            foreach (XmlNode childNode in appSettingsNode)
+            {
+                if (childNode.Attributes["key"].Value == strKey)
+                return true;
+            }
+            return false;
         }
     }
 }
