@@ -76,6 +76,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="DialogBox\AddLink.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DialogBox\AddProfile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DialogBox\ServerNameSetting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -87,6 +95,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DialogBox\AddLink.xaml.cs">
+      <DependentUpon>AddLink.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DialogBox\AddProfile.xaml.cs">
+      <DependentUpon>AddProfile.xaml</DependentUpon>
     </Compile>
     <Compile Include="DialogBox\ServerNameSetting.xaml.cs">
       <DependentUpon>ServerNameSetting.xaml</DependentUpon>

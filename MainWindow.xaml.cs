@@ -142,14 +142,22 @@ namespace fbtool
 
         private async void mnuNewProfile_Click(object sender, RoutedEventArgs e)
         {
-            await addProfileAsync();
-        }
+            // Instantiate the dialog box
+            var dlg = new AddProfile
+            {
+                Owner = this
+            };
 
-        private async Task addProfileAsync()
-        {
-            await firebase
-              .Child("profile/server1")
-              .PostAsync(new Profile("Profile 1", "Hường Dương"));
+            // Open the dialog box modally 
+            dlg.ShowDialog();
+            if (dlg.DialogResult == true)
+            {
+                string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
+                // Update
+                await firebase
+                  .Child("profile/" + serverName)
+                  .PostAsync(new Profile(dlg.Profilebd.Path, dlg.Profilebd.Facebook));
+            }
         }
 
         private async void mnuNewLink_Click(object sender, RoutedEventArgs e)

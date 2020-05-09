@@ -45,4 +45,7 @@ D:\App\FBTOOL\facebooktool\obj\Debug\App.baml
 D:\App\FBTOOL\facebooktool\obj\Debug\Resources\Style.baml
 D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\ServerNameSetting.g.cs
 D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\ServerNameSetting.baml
-D:\App\FBTOOL\facebooktool\obj\Debug\fbtool.csprojAssemblyReference.cache
+D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\AddLink.g.cs
+D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\AddProfile.g.cs
+D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\AddLink.baml
+D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\AddProfile.baml
