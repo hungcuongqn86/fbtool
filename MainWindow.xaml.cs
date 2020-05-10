@@ -158,7 +158,7 @@ namespace fbtool
                 // Update
                 await firebase
                   .Child("profile/" + serverName)
-                  .PostAsync(new Profile(dlg.Profilebd.Path, dlg.Profilebd.Facebook));
+                  .PostAsync(new Profile(dlg.Profilebd.Path, dlg.Profilebd.Facebook, dlg.Profilebd.UserName, dlg.Profilebd.Password));
             }
         }
 
@@ -222,7 +222,7 @@ namespace fbtool
             chromeDriver.Navigate();
 
             // wait login
-            WebDriverWait waitLogin = new WebDriverWait(chromeDriver, TimeSpan.FromMinutes(1));
+            WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromMinutes(1));
             Func<IWebDriver, bool> waitForLogin = new Func<IWebDriver, bool>((IWebDriver Web) =>
             {
                 Console.WriteLine("Waiting for login Facebook");
@@ -234,14 +234,14 @@ namespace fbtool
                 }
                 return false;
             });
-            waitLogin.Until(waitForLogin);
+            wait.Until(waitForLogin);
             // MessageBox.Show("login!");
 
             // Open link
             chromeDriver.Navigate().GoToUrl(_returnedLinks.First().Url);
 
             // wait load input
-            WebDriverWait waitInputFullName = new WebDriverWait(chromeDriver, TimeSpan.FromMinutes(1));
+            // WebDriverWait waitInputFullName = new WebDriverWait(chromeDriver, TimeSpan.FromMinutes(1));
             Func<IWebDriver, bool> waitForInputFullName = new Func<IWebDriver, bool>((IWebDriver Web) =>
             {
                 Console.WriteLine("Waiting for load input");
@@ -252,7 +252,7 @@ namespace fbtool
                 }
                 return false;
             });
-            waitInputFullName.Until(waitForInputFullName);
+            wait.Until(waitForInputFullName);
             // MessageBox.Show("load input!");
 
             // Input full name
@@ -260,7 +260,7 @@ namespace fbtool
             chromeDriver.FindElement(By.Name("fullName")).SendKeys(fullName);
 
             // wait button enable
-            WebDriverWait waitContBtnEnable = new WebDriverWait(chromeDriver, TimeSpan.FromMinutes(1));
+            // WebDriverWait waitContBtnEnable = new WebDriverWait(chromeDriver, TimeSpan.FromMinutes(1));
             Func<IWebDriver, bool> waitForContBtnEnable = new Func<IWebDriver, bool>((IWebDriver Web) =>
             {
                 Console.WriteLine("Waiting for enable cont button");
@@ -272,12 +272,34 @@ namespace fbtool
                 }
                 return false;
             });
-            waitContBtnEnable.Until(waitForContBtnEnable);
+            wait.Until(waitForContBtnEnable);
             // MessageBox.Show("button enable!");
 
             // Click button
-            var button = chromeDriver.FindElement(By.TagName("button"));
-            button.Click();
+            chromeDriver.FindElement(By.TagName("button")).Click();
+
+            // wait password
+            Func<IWebDriver, bool> waitForPassword = new Func<IWebDriver, bool>((IWebDriver Web) =>
+            {
+                Console.WriteLine("Waiting for password");
+                IWebElement element = Web.FindElement(By.TagName("input"));
+                if (element.GetAttribute("type").Equals("password"))
+                {
+                    return true;
+                }
+                return false;
+            });
+            wait.Until(waitForPassword);
+            // MessageBox.Show("password!");
+
+            // Input pass
+            chromeDriver.FindElement(By.XPath("//input[@type='password']")).SendKeys(profile.Password);
+
+            // wait button enable
+            wait.Until(waitForContBtnEnable);
+            // MessageBox.Show("button enable!");
+            chromeDriver.FindElement(By.TagName("button")).Click();
+
         }
 
         private string GetRandomAlphaNumeric()

@@ -32,6 +32,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Facebook" Binding="{Binding Facebook}" />
                     <DataGridTextColumn Header="Profile" Binding="{Binding Path}" />
+                    <DataGridTextColumn Header="User Name" Binding="{Binding UserName}" />
                     <DataGridTemplateColumn Header="">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
