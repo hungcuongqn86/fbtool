@@ -100,8 +100,9 @@ namespace fbtool
 
         private void LoadLink()
         {
+            string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
             _returnedLinks.Clear();
-            var child = firebase.Child("link");
+            var child = firebase.Child("link/" + serverName);
             var observable = child.AsObservable<Link>();
             var subscription = observable
                 .Where(f => !string.IsNullOrEmpty(f.Key)).ObserveOn(SynchronizationContext.Current)
@@ -174,8 +175,9 @@ namespace fbtool
             dlg.ShowDialog();
             if (dlg.DialogResult == true)
             {
+                string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
                 await firebase
-                    .Child("link")
+                    .Child("link/" + serverName)
                     .PostAsync(new Link(dlg.Linkbd.Url, 0, ""));
             }
         }
@@ -300,6 +302,9 @@ namespace fbtool
             // MessageBox.Show("button enable!");
             chromeDriver.FindElement(By.TagName("button")).Click();
 
+            // wait success
+
+            // Update link status
         }
 
         private string GetRandomAlphaNumeric()
