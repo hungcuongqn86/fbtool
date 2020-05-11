@@ -122,6 +122,7 @@ namespace fbtool
                             //  is NOT in the observableCollection - add it
                             if (f.Object.Status == 0)
                             {
+                                f.Object.Key = f.Key;
                                 _returnedLinks.Add(f.Object);
                             }
                         }
@@ -131,6 +132,7 @@ namespace fbtool
                             // event was updated 
                             if (f.Object.Status == 0)
                             {
+                                f.Object.Key = f.Key;
                                 _returnedLinks[tempIndex] = f.Object;
                             }
                             else
@@ -178,7 +180,7 @@ namespace fbtool
                 string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
                 await firebase
                     .Child("link/" + serverName)
-                    .PostAsync(new Link(dlg.Linkbd.Url, 0, ""));
+                    .PostAsync(new Link(dlg.Linkbd.Url, 0, "", ""));
             }
         }
 
@@ -203,7 +205,162 @@ namespace fbtool
             chromeDriver.Navigate();
         }
 
-        private void accessLink(object sender, RoutedEventArgs e)
+        private async void removeDeadAccount(object sender, RoutedEventArgs e)
+        {
+            Profile profile = ((FrameworkElement)sender).DataContext as Profile;
+            ChromeOptions options = new ChromeOptions();
+            string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
+            options.AddArgument("--user-data-dir=" + profilePath);
+            options.AddArgument("profile-directory=" + profile.Path);
+            options.AddArgument("disable-infobars");
+            options.AddArgument("--disable-extensions");
+            options.AddArgument("--start-maximized");
+            chromeDriver = new ChromeDriver(options);
+            chromeDriver.Url = "https://business.facebook.com/";
+            chromeDriver.Navigate();
+
+            // wait login
+            WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(15));
+            Func<IWebDriver, bool> waitForLogin = new Func<IWebDriver, bool>((IWebDriver Web) =>
+            {
+                Console.WriteLine("Waiting for login Facebook");
+                IWebElement parent1 = Web.FindElement(By.XPath("//table[contains(@class, 'uiGrid')]"));
+                ReadOnlyCollection<IWebElement> anchos = parent1.FindElements(By.TagName("a"));
+                if (anchos.Count > 0)
+                {
+                    return true;
+                }
+                return false;
+            });
+            wait.Until(waitForLogin);
+            // MessageBox.Show("login!");
+
+            IWebElement table = chromeDriver.FindElement(By.XPath("//table[contains(@class, 'uiGrid')]"));
+            ReadOnlyCollection<IWebElement> anchList = table.FindElements(By.TagName("a"));
+            String selectLinkOpeninNewTab = Keys.Control + Keys.Return;
+            foreach (IWebElement item in anchList)
+            {
+                item.SendKeys(selectLinkOpeninNewTab);
+            }
+            ReadOnlyCollection<string> tabs = chromeDriver.WindowHandles;
+            foreach (string tab in tabs)
+            {
+                chromeDriver.SwitchTo().Window(tab);
+
+                Func<IWebDriver, bool> waitShowDiedBm = new Func<IWebDriver, bool>((IWebDriver Web) =>
+                {
+                    try
+                    {
+                        IWebElement alertE = Web.FindElement(By.XPath("//div[@class='_29dy']"));
+                        string color = alertE.GetCssValue("background-color");
+                        if ((color.Equals("rgb(206, 0, 47)")) || color.Equals("rgba(206, 0, 47, 1)"))
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
+                    catch
+                    {
+                        return true;
+                    }
+                });
+
+                try
+                {
+                    wait.Until(waitShowDiedBm);
+                }
+                catch {}
+
+                // Click setting
+                ReadOnlyCollection<IWebElement> errAlert = chromeDriver.FindElements(By.XPath("//div[@class='_29dy']"));
+                if (errAlert.Count > 0)
+                {
+                    string colorchk = errAlert.ElementAt(0).GetCssValue("background-color");
+                    if ((colorchk.Equals("rgb(206, 0, 47)")) || colorchk.Equals("rgba(206, 0, 47, 1)"))
+                    {
+                        chromeDriver.FindElement(By.XPath("//a[contains(@href, 'https://business.facebook.com/settings?')]")).Click();
+                    }
+                }
+
+                if (chromeDriver.FindElements(By.XPath("//table[contains(@class, 'uiGrid')]")).Count == 0)
+                {
+                    chromeDriver.Close();
+                }
+            }
+
+            // Leaving
+            ReadOnlyCollection<string> tabsFull = chromeDriver.WindowHandles;
+            foreach (string tab in tabsFull)
+            {
+                chromeDriver.SwitchTo().Window(tab);
+
+                Func<IWebDriver, bool> waitShowInfoButton = new Func<IWebDriver, bool>((IWebDriver Web) =>
+                {
+                    try
+                    {
+                        ReadOnlyCollection<IWebElement> infoButton = Web.FindElements(By.XPath("//button[@aria-describedby='js_2z']"));
+                        if (infoButton.Count > 0)
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
+                    catch
+                    {
+                        return true;
+                    }
+                });
+
+                try
+                {
+                    wait.Until(waitShowInfoButton);
+                }
+                catch { }
+
+                // Click infoButton
+                ReadOnlyCollection<IWebElement> infoButtons = chromeDriver.FindElements(By.XPath("//button[@aria-describedby='js_2z']"));
+                if (infoButtons.Count > 0)
+                {
+                    infoButtons.ElementAt(0).Click();
+                    // wait Leaving btn
+                    Func<IWebDriver, bool> waitShowLeavingButton = new Func<IWebDriver, bool>((IWebDriver Web) =>
+                    {
+                        try
+                        {
+                            IWebElement parent1 = Web.FindElement(By.XPath("//button[contains(@class, '_271k')]"));
+                            IWebElement parent2 = parent1.FindElement(By.XPath("div[@class='_43rl']"));
+                            IWebElement element = parent2.FindElement(By.XPath("div[@class='_43rm']"));
+
+                            if (element.GetAttribute("data-hover").Equals("tooltip"))
+                            {
+                                return true;
+                            }
+                            return false;
+                        }
+                        catch
+                        {
+                            return true;
+                        }
+                    });
+
+                    try
+                    {
+                        wait.Until(waitShowLeavingButton);
+                    }
+                    catch { }
+
+                    // click Leaving btn
+
+                    // Confirm
+
+                }
+            }
+
+            // end proccess
+            chromeDriver.SwitchTo().Window(tabs.ElementAt(0));
+        }
+
+        private async void accessLinkAsync(object sender, RoutedEventArgs e)
         {
             Profile profile = ((FrameworkElement)sender).DataContext as Profile;
             if (chromeDriver != null)
@@ -240,7 +397,8 @@ namespace fbtool
             // MessageBox.Show("login!");
 
             // Open link
-            chromeDriver.Navigate().GoToUrl(_returnedLinks.First().Url);
+            Link curentLink = _returnedLinks.First();
+            chromeDriver.Navigate().GoToUrl(curentLink.Url);
 
             // wait load input
             // WebDriverWait waitInputFullName = new WebDriverWait(chromeDriver, TimeSpan.FromMinutes(1));
@@ -305,6 +463,12 @@ namespace fbtool
             // wait success
 
             // Update link status
+            string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
+            curentLink.Status = 1;
+            await firebase
+              .Child("link/" + serverName)
+              .Child(curentLink.Key)
+              .PutAsync(curentLink);
         }
 
         private string GetRandomAlphaNumeric()
