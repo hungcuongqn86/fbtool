@@ -282,7 +282,7 @@ namespace fbtool
                     }
                 }
 
-                if (chromeDriver.FindElements(By.XPath("//table[contains(@class, 'uiGrid')]")).Count == 0)
+                if (chromeDriver.FindElements(By.XPath("//div[@class='_3-8-']/table[contains(@class, 'uiGrid')]")).Count == 0)
                 {
                     chromeDriver.Close();
                 }
@@ -298,8 +298,8 @@ namespace fbtool
                 {
                     try
                     {
-                        ReadOnlyCollection<IWebElement> infoButton = Web.FindElements(By.XPath("//button[@aria-describedby='js_2z']"));
-                        if (infoButton.Count > 0)
+                        ReadOnlyCollection<IWebElement> iconElements = Web.FindElements(By.XPath("//i[contains(@class, 'sx_15dd7f')]"));
+                        if (iconElements.Count > 0)
                         {
                             return true;
                         }
@@ -318,41 +318,49 @@ namespace fbtool
                 catch { }
 
                 // Click infoButton
-                ReadOnlyCollection<IWebElement> infoButtons = chromeDriver.FindElements(By.XPath("//button[@aria-describedby='js_2z']"));
-                if (infoButtons.Count > 0)
+                ReadOnlyCollection<IWebElement> iconElementss = chromeDriver.FindElements(By.XPath("//i[contains(@class, 'sx_15dd7f')]"));
+                if (iconElementss.Count > 0)
                 {
-                    infoButtons.ElementAt(0).Click();
-                    // wait Leaving btn
-                    Func<IWebDriver, bool> waitShowLeavingButton = new Func<IWebDriver, bool>((IWebDriver Web) =>
-                    {
-                        try
-                        {
-                            IWebElement parent1 = Web.FindElement(By.XPath("//button[contains(@class, '_271k')]"));
-                            IWebElement parent2 = parent1.FindElement(By.XPath("div[@class='_43rl']"));
-                            IWebElement element = parent2.FindElement(By.XPath("div[@class='_43rm']"));
+                    IWebElement parentr1 = iconElementss.ElementAt(0).FindElement(By.XPath(".."));
+                    IWebElement parentr2 = parentr1.FindElement(By.XPath(".."));
+                    IWebElement parentr3 = parentr2.FindElement(By.XPath(".."));
+                    ReadOnlyCollection<IWebElement> InfoButtons = parentr3.FindElements(By.TagName("button"));
 
-                            if (element.GetAttribute("data-hover").Equals("tooltip"))
+                    if (InfoButtons.Count > 0)
+                    {
+                        InfoButtons.ElementAt(0).Click();
+                        // wait Leaving btn
+                        Func<IWebDriver, bool> waitShowLeavingButton = new Func<IWebDriver, bool>((IWebDriver Web) =>
+                        {
+                            try
+                            {
+                                IWebElement parent1 = Web.FindElement(By.XPath("//button[contains(@class, '_271k')]"));
+                                IWebElement parent2 = parent1.FindElement(By.XPath("div[@class='_43rl']"));
+                                IWebElement element = parent2.FindElement(By.XPath("div[@class='_43rm']"));
+
+                                if (element.GetAttribute("data-hover").Equals("tooltip"))
+                                {
+                                    return true;
+                                }
+                                return false;
+                            }
+                            catch
                             {
                                 return true;
                             }
-                            return false;
-                        }
-                        catch
+                        });
+
+                        try
                         {
-                            return true;
+                            wait.Until(waitShowLeavingButton);
                         }
-                    });
+                        catch { }
 
-                    try
-                    {
-                        wait.Until(waitShowLeavingButton);
+                        // click Leaving btn
+
+                        // Confirm
+
                     }
-                    catch { }
-
-                    // click Leaving btn
-
-                    // Confirm
-
                 }
             }
 
