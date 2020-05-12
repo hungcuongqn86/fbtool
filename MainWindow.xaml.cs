@@ -205,7 +205,7 @@ namespace fbtool
             chromeDriver.Navigate();
         }
 
-        private async void removeDeadAccount(object sender, RoutedEventArgs e)
+        private async void RemoveDeadAccount(object sender, RoutedEventArgs e)
         {
             Profile profile = ((FrameworkElement)sender).DataContext as Profile;
             ChromeOptions options = new ChromeOptions();
