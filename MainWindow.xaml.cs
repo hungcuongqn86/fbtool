@@ -334,11 +334,11 @@ namespace fbtool
                         {
                             try
                             {
-                                IWebElement parent1 = Web.FindElement(By.XPath("//button[contains(@class, '_271k')]"));
-                                IWebElement parent2 = parent1.FindElement(By.XPath("div[@class='_43rl']"));
-                                IWebElement element = parent2.FindElement(By.XPath("div[@class='_43rm']"));
-
-                                if (element.GetAttribute("data-hover").Equals("tooltip"))
+                                IWebElement bmnameElementf = Web.FindElement(By.XPath("//div[@class='_skv']"));
+                                string bmnamef = bmnameElementf.Text;
+                                string xpathf = "//button[contains(@class, '_271k')]/div[@class='_43rl']/div[@class='_43rm' and contains(text(), '" + bmnamef + "')]";
+                                IWebElement LeavingBtnTextf = Web.FindElement(By.XPath(xpathf));
+                                if (LeavingBtnTextf.GetAttribute("data-hover").Equals("tooltip"))
                                 {
                                     return true;
                                 }
@@ -357,15 +357,24 @@ namespace fbtool
                         catch { }
 
                         // click Leaving btn
-
-                        // Confirm
-
+                        IWebElement bmnameElement = chromeDriver.FindElement(By.XPath("//div[@class='_skv']"));
+                        string bmname = bmnameElement.Text;
+                        string xpath = "//button[contains(@class, '_271k')]/div[@class='_43rl']/div[@class='_43rm' and contains(text(), '" + bmname + "')]";
+                        ReadOnlyCollection<IWebElement> LeavingBtnText = chromeDriver.FindElements(By.XPath(xpath));
+                        if (LeavingBtnText.Count > 0)
+                        {
+                            IWebElement divParentLeavingBtnText = LeavingBtnText.ElementAt(0).FindElement(By.XPath(".."));
+                            IWebElement buttonLeavingBtn = divParentLeavingBtnText.FindElement(By.XPath(".."));
+                            buttonLeavingBtn.Click();
+                            // Confirm
+                        }
                     }
                 }
             }
 
             // end proccess
             chromeDriver.SwitchTo().Window(tabs.ElementAt(0));
+            MessageBox.Show("Done!");
         }
 
         private async void accessLinkAsync(object sender, RoutedEventArgs e)
