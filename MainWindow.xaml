@@ -43,14 +43,14 @@
                     <DataGridTemplateColumn Header="">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Click="accessLinkAsync">Access Link</Button>
+                                <Button Click="accessLinkAsync">Lấy Link</Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Click="RemoveDeadAccount">Remove Dead Account</Button>
+                                <Button Click="RemoveDeadAccount">Xóa tk vi phạm</Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

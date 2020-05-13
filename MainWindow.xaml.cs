@@ -240,8 +240,13 @@ namespace fbtool
             wait.Until(waitForLogin);
             // MessageBox.Show("login!");
 
-            IWebElement table = chromeDriver.FindElement(By.XPath("//table[contains(@class, 'uiGrid')]"));
-            ReadOnlyCollection<IWebElement> anchList = table.FindElements(By.TagName("a"));
+            ReadOnlyCollection<IWebElement> table = chromeDriver.FindElements(By.XPath("//div[@class='_3-8-']/table[contains(@class, 'uiGrid')]"));
+            if (table.Count == 0)
+            {
+                MessageBox.Show("Không có tài khoản nào!");
+                return;
+            }
+            ReadOnlyCollection<IWebElement> anchList = table.ElementAt(0).FindElements(By.TagName("a"));
             String selectLinkOpeninNewTab = Keys.Control + Keys.Return;
             foreach (IWebElement item in anchList)
             {
