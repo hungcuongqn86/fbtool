@@ -49,3 +49,4 @@ D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\AddLink.g.cs
 D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\AddProfile.g.cs
 D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\AddLink.baml
 D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\AddProfile.baml
+D:\App\FBTOOL\facebooktool\obj\Debug\fbtool.csprojAssemblyReference.cache
