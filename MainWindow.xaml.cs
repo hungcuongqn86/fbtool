@@ -27,6 +27,7 @@ using System.Configuration;
 using System.Xml;
 using fbtool.DialogBox;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Interactions;
 
 namespace fbtool
 {
@@ -287,13 +288,40 @@ namespace fbtool
                     string colorchk = errAlert.ElementAt(0).GetCssValue("background-color");
                     if ((colorchk.Equals("rgb(206, 0, 47)")) || colorchk.Equals("rgba(206, 0, 47, 1)"))
                     {
-                        chromeDriver.FindElement(By.XPath("//a[contains(@href, 'https://business.facebook.com/settings?')]")).Click();
+
+                        // Get id
+                        string businessId = "";
+                        string curUrl = chromeDriver.Url;
+                        var queryString = curUrl.Split('?').Last();
+                        var JIDArrVal = queryString.Split('&');
+                        foreach (string item in JIDArrVal)
+                        {
+                            var itemSplit = item.Split('=');
+                            if (itemSplit.Length > 1)
+                            {
+                                if (itemSplit[0] == "business_id")
+                                {
+                                    businessId = itemSplit[1];
+                                }
+                            }
+                        }
+                        chromeDriver.Url = "https://business.facebook.com/settings/info?business_id=" + businessId;
+                        chromeDriver.Navigate();
+                    }
+                    else
+                    {
+                        if (chromeDriver.FindElements(By.XPath("//div[@class='_3-8-']/table[contains(@class, 'uiGrid')]")).Count == 0)
+                        {
+                            chromeDriver.Close();
+                        }
                     }
                 }
-
-                if (chromeDriver.FindElements(By.XPath("//div[@class='_3-8-']/table[contains(@class, 'uiGrid')]")).Count == 0)
+                else
                 {
-                    chromeDriver.Close();
+                    if (chromeDriver.FindElements(By.XPath("//div[@class='_3-8-']/table[contains(@class, 'uiGrid')]")).Count == 0)
+                    {
+                        chromeDriver.Close();
+                    }
                 }
             }
 
@@ -303,12 +331,12 @@ namespace fbtool
             {
                 chromeDriver.SwitchTo().Window(tab);
 
-                Func<IWebDriver, bool> waitShowInfoButton = new Func<IWebDriver, bool>((IWebDriver Web) =>
+                Func<IWebDriver, bool> waitLoading = new Func<IWebDriver, bool>((IWebDriver Web) =>
                 {
                     try
                     {
-                        ReadOnlyCollection<IWebElement> iconElements = Web.FindElements(By.XPath("//i[contains(@class, 'sx_15dd7f')]"));
-                        if (iconElements.Count > 0)
+                        ReadOnlyCollection<IWebElement> checkE = Web.FindElements(By.XPath("//button[contains(@class, '_271k')]/div[@class='_43rl']/div[@class='_43rm']"));
+                        if (checkE.Count > 0)
                         {
                             return true;
                         }
@@ -322,45 +350,40 @@ namespace fbtool
 
                 try
                 {
-                    wait.Until(waitShowInfoButton);
+                    wait.Until(waitLoading);
                 }
                 catch { }
 
-                // Click infoButton
-                ReadOnlyCollection<IWebElement> iconElementss = chromeDriver.FindElements(By.XPath("//i[contains(@class, 'sx_15dd7f')]"));
-                if (iconElementss.Count > 0)
+                ReadOnlyCollection<IWebElement> bmnameElementf = chromeDriver.FindElements(By.XPath("//div[@class='_skv']"));
+                if (bmnameElementf.Count == 0)
                 {
-                    IWebElement parentr1 = iconElementss.ElementAt(0).FindElement(By.XPath(".."));
-                    IWebElement parentr2 = parentr1.FindElement(By.XPath(".."));
-                    IWebElement parentr3 = parentr2.FindElement(By.XPath(".."));
-                    ReadOnlyCollection<IWebElement> InfoButtons = parentr3.FindElements(By.TagName("button"));
-
-                    if (InfoButtons.Count > 0)
+                    bmnameElementf = chromeDriver.FindElements(By.XPath("//div[@class='_3-90']/div[@class='ellipsis']"));
+                }
+                if (bmnameElementf.Count > 0)
+                {
+                    string bmname = bmnameElementf.ElementAt(0).Text;
+                    string xpath = "//button[contains(@class, '_271k')]/div[@class='_43rl']/div[contains(., '" + bmname + "') and @class='_43rm']";
+                    ReadOnlyCollection<IWebElement> LeavingBtnText = chromeDriver.FindElements(By.XPath(xpath));
+                    if (LeavingBtnText.Count > 0)
                     {
-                        InfoButtons.ElementAt(0).Click();
-                        System.Threading.Thread.Sleep(10000);
+                        IWebElement divParentLeavingBtnText = LeavingBtnText.ElementAt(0).FindElement(By.XPath(".."));
+                        IWebElement buttonLeavingBtn = divParentLeavingBtnText.FindElement(By.XPath(".."));
+                        buttonLeavingBtn.Click();
 
-                        ReadOnlyCollection<IWebElement> bmnameElementf = chromeDriver.FindElements(By.XPath("//div[@class='_skv']"));
-                        if (bmnameElementf.Count == 0)
+                        // Confirm
+                        System.Threading.Thread.Sleep(2000);
+                        ReadOnlyCollection<IWebElement> btnConfirm = chromeDriver.FindElements(By.XPath(xpath));
+                        if (btnConfirm.Count > 0)
                         {
-                            bmnameElementf = chromeDriver.FindElements(By.XPath("//div[@class='_3-90']/div[@class='ellipsis']"));
-                        }
-                        if (bmnameElementf.Count > 0)
-                        {
-                            string bmname = bmnameElementf.ElementAt(0).Text;
-                            string xpath = "//button[contains(@class, '_271k')]/div[@class='_43rl']/div[contains(., '" + bmname + "') and @class='_43rm']";
-                            ReadOnlyCollection<IWebElement> LeavingBtnText = chromeDriver.FindElements(By.XPath(xpath));
-                            if (LeavingBtnText.Count > 0)
+                            foreach (IWebElement item in btnConfirm)
                             {
-                                IWebElement divParentLeavingBtnText = LeavingBtnText.ElementAt(0).FindElement(By.XPath(".."));
-                                IWebElement buttonLeavingBtn = divParentLeavingBtnText.FindElement(By.XPath(".."));
-                                buttonLeavingBtn.Click();
-
-                                // Confirm
-                                System.Threading.Thread.Sleep(2000);
-                                IWebElement dialogElementf = chromeDriver.FindElement(By.XPath("//div[contains(@class, '_1py_') and @role='dialog']"));
-                                IWebElement btnConfirm = dialogElementf.FindElement(By.XPath("//button[contains(@class, '_271k')]/div[@class='_43rl']/div[contains(., '" + bmname + "')]"));
-                                btnConfirm.Click();
+                                divParentLeavingBtnText = item.FindElement(By.XPath(".."));
+                                buttonLeavingBtn = divParentLeavingBtnText.FindElement(By.XPath(".."));
+                                string colorchk = buttonLeavingBtn.GetCssValue("background-color");
+                                if ((colorchk.Equals("rgb(24, 119, 242)")) || colorchk.Equals("rgba(24, 119, 242, 1)"))
+                                {
+                                    buttonLeavingBtn.Click();
+                                }
                             }
                         }
                     }
