@@ -84,6 +84,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DialogBox\ImportProfile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DialogBox\ServerNameSetting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -102,6 +106,9 @@
     <Compile Include="DialogBox\AddProfile.xaml.cs">
       <DependentUpon>AddProfile.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DialogBox\ImportProfile.xaml.cs">
+      <DependentUpon>ImportProfile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DialogBox\ServerNameSetting.xaml.cs">
       <DependentUpon>ServerNameSetting.xaml</DependentUpon>
     </Compile>
@@ -117,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Link.cs" />
+    <Compile Include="Model\Via.cs" />
     <Compile Include="Model\Profile.cs" />
     <Compile Include="Model\Setting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

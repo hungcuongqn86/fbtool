@@ -166,6 +166,22 @@ namespace fbtool
             }
         }
 
+        private void MnuImportProfile_Click(object sender, RoutedEventArgs e)
+        {
+            // Instantiate the dialog box
+            var dlg = new ImportProfile
+            {
+                Owner = this
+            };
+
+            // Open the dialog box modally 
+            dlg.ShowDialog();
+            if (dlg.DialogResult == true)
+            {
+
+            }
+        }
+
         private async void mnuNewLink_Click(object sender, RoutedEventArgs e)
         {
             // Instantiate the dialog box
@@ -206,7 +222,7 @@ namespace fbtool
             chromeDriver.Navigate();
         }
 
-        private async void RemoveDeadAccount(object sender, RoutedEventArgs e)
+        private void RemoveDeadAccount(object sender, RoutedEventArgs e)
         {
             Profile profile = ((FrameworkElement)sender).DataContext as Profile;
             if (chromeDriver != null)
@@ -251,7 +267,7 @@ namespace fbtool
                     item.SendKeys(selectLinkOpeninNewTab);
                 }
             }
-            
+
             ReadOnlyCollection<string> tabs = chromeDriver.WindowHandles;
             foreach (string tab in tabs)
             {
@@ -279,7 +295,7 @@ namespace fbtool
                 {
                     wait.Until(waitShowDiedBm);
                 }
-                catch {}
+                catch { }
 
                 // Click setting
                 ReadOnlyCollection<IWebElement> errAlert = chromeDriver.FindElements(By.XPath("//div[@class='_29dy']"));

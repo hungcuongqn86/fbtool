@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\App\FBTOOL\facebooktool\App.xaml
-51116796013
+62008925665
 
-131634622033
+151442622358
 23-1425674924
-DialogBox\AddLink.xaml;DialogBox\AddProfile.xaml;DialogBox\ServerNameSetting.xaml;MainWindow.xaml;Resources\Style.xaml;
+DialogBox\AddLink.xaml;DialogBox\AddProfile.xaml;DialogBox\ImportProfile.xaml;DialogBox\ServerNameSetting.xaml;MainWindow.xaml;Resources\Style.xaml;
 
-True
+False
 

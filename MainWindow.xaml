@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:fbtool"
         mc:Ignorable="d"
-        Title="FacebookTool" Height="450" Width="1000">
+        Title="FacebookTool" Height="450" Width="1000" WindowState="Maximized">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_System">
@@ -14,8 +14,9 @@
             </MenuItem>
             <MenuItem Header="_Profile">
                 <MenuItem Header="_Add" Click="mnuNewProfile_Click"></MenuItem>
+                <MenuItem Header="_Import" Click="MnuImportProfile_Click"></MenuItem>
             </MenuItem>
-            <MenuItem Header="_Link">
+            <MenuItem Header="_Link BM">
                 <MenuItem Header="_Add" Click="mnuNewLink_Click"></MenuItem>
                 <MenuItem Header="_Import"></MenuItem>
             </MenuItem>
@@ -58,7 +59,7 @@
             </DataGrid>
             <DataGrid Grid.Column="1" Name="dgLink" AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Link" Binding="{Binding Url}" />
+                    <DataGridTextColumn Header="Link BM" Binding="{Binding Url}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
