@@ -1,7 +1,10 @@
 ﻿using fbtool.Model;
+using OpenQA.Selenium.Chrome;
+using OtpNet;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,11 +25,13 @@ namespace fbtool.DialogBox
     /// </summary>
     public partial class ImportProfile : Window, INotifyPropertyChanged
     {
+        ChromeDriver chromeDriver;
         public ImportProfile()
         {
             InitializeComponent();
             ViaData = new Via();
             this.DataContext = ViaData;
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -57,12 +62,36 @@ namespace fbtool.DialogBox
                 while ((line = reader.ReadLine()) != null)
                 {
                     // Do something with the line
-                    Console.WriteLine(line);
+                    addVia(line);
                 }
             }
 
             // Dialog box accepted
             DialogResult = true;
+        }
+
+        private void addVia(string line)
+        {
+            string[] viadetail = line.Split('|');
+            if (viadetail.Length == 3)
+            {
+                /*var secretKey = Base32Encoding.ToBytes("5GJK63K2GE7XTFFWXQXUIMUPIJUTZJ32");
+                var totp = new Totp(secretKey);
+                var otp = totp.ComputeTotp();
+                Console.WriteLine(otp);*/
+
+                string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
+
+                ChromeOptions options = new ChromeOptions();
+                options.AddArgument("--user-data-dir=" + profilePath);
+                options.AddArgument("profile-directory=" + viadetail[0]);
+                options.AddArgument("disable-infobars");
+                options.AddArgument("--disable-extensions");
+                options.AddArgument("--start-maximized");
+                chromeDriver = new ChromeDriver(options);
+                chromeDriver.Url = "https://www.facebook.com/";
+                chromeDriver.Navigate();
+            }
         }
 
         // Validate all dependency objects in a window
@@ -88,5 +117,7 @@ namespace fbtool.DialogBox
 
             // All dependency objects are valid
         }
+
+
     }
 }
