@@ -28,6 +28,7 @@ using System.Xml;
 using fbtool.DialogBox;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Interactions;
+using OtpNet;
 
 namespace fbtool
 {
@@ -448,6 +449,14 @@ namespace fbtool
                   .PutAsync(curentLink);
             }
             chromeDriver.Quit();
+        }
+
+        private void genPass2(object sender, RoutedEventArgs e)
+        {
+            Profile profile = ((FrameworkElement)sender).DataContext as Profile;
+            var sKey = Base32Encoding.ToBytes(profile.SecretKey);
+            var totp = new Totp(sKey);
+            MessageBox.Show(totp.ComputeTotp());
         }
 
         private string GetRandomAlphaNumeric()

@@ -76,6 +76,12 @@ namespace fbtool.DialogBox
                     // Do something with the line
                     addVia(line);
                 }
+                if (chromeDriver != null)
+                {
+                    chromeDriver.Close();
+                    System.Threading.Thread.Sleep(2000);
+                    chromeDriver.Quit();
+                }
             }
 
             // Dialog box accepted
@@ -87,6 +93,12 @@ namespace fbtool.DialogBox
             string[] viadetail = line.Split('|');
             if (viadetail.Length == 3)
             {
+                if (chromeDriver != null)
+                {
+                    chromeDriver.Close();
+                    System.Threading.Thread.Sleep(2000);
+                    chromeDriver.Quit();
+                }
                 string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
 
                 ChromeOptions options = new ChromeOptions();
@@ -114,8 +126,6 @@ namespace fbtool.DialogBox
                     waitLoading();
                 }
                 await saveToDbAsync(viadetail[0], viadetail[1], viadetail[2]);
-                chromeDriver.Quit();
-                System.Threading.Thread.Sleep(3000);
             }
         }
 
