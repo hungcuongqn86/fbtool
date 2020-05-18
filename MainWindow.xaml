@@ -31,9 +31,7 @@
             </Grid.RowDefinitions>
             <DataGrid Grid.Column="0" Name="dgProfile" AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Facebook" Binding="{Binding Facebook}" />
-                    <DataGridTextColumn Header="Profile" Binding="{Binding Path}" />
-                    <DataGridTextColumn Header="User Name" Binding="{Binding UserName}" />
+                    <DataGridTextColumn Header="Facebook" Binding="{Binding Fid}" />
                     <DataGridTemplateColumn Header="">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

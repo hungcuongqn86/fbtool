@@ -8,25 +8,22 @@ namespace fbtool.Model
 {
     public class Profile
     {
-        public String Path { get; set; }
-        public String Facebook { get; set; }
-        public String UserName { get; set; }
-        public String Password { get; set; }
+        public string Fid { get; set; }
+        public string Password { get; set; }
+        public string SecretKey { get; set; }
 
         public Profile()
         {
-            Path = "";
-            Facebook = "";
-            UserName = "";
+            Fid = "";
             Password = "";
+            SecretKey = "";
         }
 
-        public Profile(String path, String facebook, String userName, String password)
+        public Profile(string fid, string password, string secretKey)
         {
-            Path = path;
-            Facebook = facebook;
-            UserName = userName;
+            Fid = fid;
             Password = password;
+            SecretKey = secretKey;
         }
     }
 }

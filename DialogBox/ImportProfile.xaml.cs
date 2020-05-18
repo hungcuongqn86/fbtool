@@ -1,8 +1,13 @@
 ﻿using fbtool.Model;
+using Firebase.Database;
+using Firebase.Database.Query;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 using OtpNet;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
@@ -25,10 +30,17 @@ namespace fbtool.DialogBox
     /// </summary>
     public partial class ImportProfile : Window, INotifyPropertyChanged
     {
+        FirebaseClient firebase;
         ChromeDriver chromeDriver;
         public ImportProfile()
         {
             InitializeComponent();
+            string firebaseUrl = ConfigurationManager.AppSettings["FirebaseUrl"].ToString();
+            string firebaseSecretKey = ConfigurationManager.AppSettings["FirebaseSecretKey"].ToString();
+            firebase = new FirebaseClient(firebaseUrl, new FirebaseOptions
+            {
+                AuthTokenAsyncFactory = () => Task.FromResult(firebaseSecretKey)
+            });
             ViaData = new Via();
             this.DataContext = ViaData;
 
@@ -70,16 +82,11 @@ namespace fbtool.DialogBox
             DialogResult = true;
         }
 
-        private void addVia(string line)
+        private async void addVia(string line)
         {
             string[] viadetail = line.Split('|');
             if (viadetail.Length == 3)
             {
-                /*var secretKey = Base32Encoding.ToBytes("5GJK63K2GE7XTFFWXQXUIMUPIJUTZJ32");
-                var totp = new Totp(secretKey);
-                var otp = totp.ComputeTotp();
-                Console.WriteLine(otp);*/
-
                 string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
 
                 ChromeOptions options = new ChromeOptions();
@@ -89,9 +96,87 @@ namespace fbtool.DialogBox
                 options.AddArgument("--disable-extensions");
                 options.AddArgument("--start-maximized");
                 chromeDriver = new ChromeDriver(options);
-                chromeDriver.Url = "https://www.facebook.com/";
+                chromeDriver.Url = "https://business.facebook.com/select/";
                 chromeDriver.Navigate();
+                waitLoading();
+
+                // If login
+                string url = chromeDriver.Url;
+                if (url.Contains("https://business.facebook.com/login.php"))
+                {
+                    chromeDriver.FindElement(By.Name("email")).SendKeys(viadetail[0]);
+                    chromeDriver.FindElement(By.Name("pass")).SendKeys(viadetail[1]);
+                    chromeDriver.FindElement(By.Id("loginbutton")).Click();
+                    waitLoading();
+                    pass2Submit(viadetail[2]);
+                    waitLoading();
+                    saveBrowser();
+                    waitLoading();
+                }
+                await saveToDbAsync(viadetail[0], viadetail[1], viadetail[2]);
+                chromeDriver.Quit();
+                System.Threading.Thread.Sleep(3000);
             }
+        }
+
+        private string genOtp(string secretKey)
+        {
+            var sKey = Base32Encoding.ToBytes(secretKey);
+            var totp = new Totp(sKey);
+            return totp.ComputeTotp();
+        }
+
+        private async Task saveToDbAsync(string id, string pass, string secretKey)
+        {
+            string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
+            // Update
+            await firebase
+              .Child("profile/" + serverName + "/" + id)
+              .PutAsync(new Profile(id, pass, secretKey));
+        }
+
+        private void pass2Submit(string secretKey)
+        {
+            ReadOnlyCollection<IWebElement> pass2 = chromeDriver.FindElements(By.Name("approvals_code"));
+            if (pass2.Count > 0)
+            {
+                pass2.ElementAt(0).SendKeys(genOtp(secretKey));
+                chromeDriver.FindElement(By.Id("checkpointSubmitButton")).Click();
+            }
+        }
+
+        private void saveBrowser()
+        {
+            ReadOnlyCollection<IWebElement> elements = chromeDriver.FindElements(By.Name("name_action_selected"));
+            if (elements.Count > 0)
+            {
+                elements.ElementAt(0).Click();
+                chromeDriver.FindElement(By.Id("checkpointSubmitButton")).Click();
+            }
+        }
+
+        private void waitLoading()
+        {
+            // wait loading
+            WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(30));
+            Func<IWebDriver, bool> waitLoading = new Func<IWebDriver, bool>((IWebDriver Web) =>
+            {
+                try
+                {
+                    IWebElement alertE = Web.FindElement(By.Id("abccuongnh"));
+                    return false;
+                }
+                catch
+                {
+                    return true;
+                }
+            });
+
+            try
+            {
+                wait.Until(waitLoading);
+            }
+            catch { }
         }
 
         // Validate all dependency objects in a window
@@ -117,7 +202,5 @@ namespace fbtool.DialogBox
 
             // All dependency objects are valid
         }
-
-
     }
 }
