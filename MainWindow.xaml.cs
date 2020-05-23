@@ -565,6 +565,16 @@ namespace fbtool
 
                             contBtnch.Click();
                             // 
+                            System.Threading.Thread.Sleep(3000);
+                            ReadOnlyCollection<IWebElement> contBtaddAd = chromeDriver.FindElements(By.XPath("//div[contains(@class, '_2pi3')]/div[@class='_6vph']/div[contains(@class, 'sx_4e90c2')]"));
+                            if (contBtaddAd.Count > 0)
+                            {
+                                IWebElement contBtaddAd1 = contBtaddAd.ElementAt(0).FindElement(By.XPath(".."));
+                                IWebElement contBtaddAd2 = contBtaddAd1.FindElement(By.XPath(".."));
+
+                                contBtaddAd2.Click();
+                                // input
+                            }
                         }
                     }
                 }
