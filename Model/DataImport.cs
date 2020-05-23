@@ -8,15 +8,18 @@ namespace fbtool.Model
 {
     public class DataImport
     {
-        public String Data { get; set; }
+        public int Count { get; set; }
+        public string Data { get; set; }
 
         public DataImport()
         {
             Data = "";
+            Count = 1;
         }
 
-        public DataImport(String data)
+        public DataImport(string data, int count)
         {
+            Count = count;
             Data = data;
         }
     }

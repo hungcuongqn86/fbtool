@@ -50,7 +50,7 @@
                     <DataGridTemplateColumn Header="">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Click="accessLinkAsync">Thêm BM</Button>
+                                <Button Click="AddBmClick">Thêm BM</Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

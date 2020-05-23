@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\cuongnh\fbtool\App.xaml
-71257514750
+8-921814585
 
-17-564336486
+18243557455
 24-1263688714
-DialogBox\AddLink.xaml;DialogBox\AddProfile.xaml;DialogBox\ImportLink.xaml;DialogBox\ImportProfile.xaml;DialogBox\ServerNameSetting.xaml;MainWindow.xaml;Resources\Style.xaml;
+DialogBox\AddBm.xaml;DialogBox\AddLink.xaml;DialogBox\AddProfile.xaml;DialogBox\ImportLink.xaml;DialogBox\ImportProfile.xaml;DialogBox\ServerNameSetting.xaml;MainWindow.xaml;Resources\Style.xaml;
 
-False
+True
 

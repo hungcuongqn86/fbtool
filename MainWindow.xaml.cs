@@ -418,7 +418,23 @@ namespace fbtool
             MessageBox.Show("Done!");
         }
 
-        private async void accessLinkAsync(object sender, RoutedEventArgs e)
+        private void AddBmClick(object sender, RoutedEventArgs e)
+        {
+            // Instantiate the dialog box
+            var dlg = new AddBm
+            {
+                Owner = this
+            };
+
+            // Open the dialog box modally 
+            dlg.ShowDialog();
+            if (dlg.DialogResult == true)
+            {
+                accessLinkAsync(sender, dlg.Data.Count);
+            }
+        }
+
+        private async void accessLinkAsync(object sender, int count)
         {
             if (chromeDriver != null)
             {
