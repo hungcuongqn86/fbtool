@@ -204,8 +204,9 @@ namespace fbtool
 
         private async void RemoveAccount(object sender, RoutedEventArgs e)
         {
+            Profile profile = ((FrameworkElement)sender).DataContext as Profile;
             // Instantiate the dialog box
-            var dlg = new AddLink
+            var dlg = new Confirm
             {
                 Owner = this
             };
@@ -216,8 +217,8 @@ namespace fbtool
             {
                 string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
                 await firebase
-                    .Child("link/" + serverName)
-                    .PostAsync(new Link(dlg.Linkbd.Url, 0, "", ""));
+                     .Child("profile/" + serverName)
+                     .Child(profile.Fid).DeleteAsync();
             }
         }
 
@@ -566,14 +567,13 @@ namespace fbtool
                             contBtnch.Click();
                             // 
                             System.Threading.Thread.Sleep(3000);
-                            ReadOnlyCollection<IWebElement> contBtaddAd = chromeDriver.FindElements(By.XPath("//div[contains(@class, '_2pi3')]/div[@class='_6vph']/div[contains(@class, 'sx_4e90c2')]"));
+                            ReadOnlyCollection<IWebElement> contBtaddAd = chromeDriver.FindElements(By.XPath("//div[@data-testid='AddAssetButton-brands/createIcon']"));
                             if (contBtaddAd.Count > 0)
                             {
-                                IWebElement contBtaddAd1 = contBtaddAd.ElementAt(0).FindElement(By.XPath(".."));
-                                IWebElement contBtaddAd2 = contBtaddAd1.FindElement(By.XPath(".."));
-
-                                contBtaddAd2.Click();
+                                contBtaddAd.ElementAt(0).Click();
                                 // input
+                                System.Threading.Thread.Sleep(3000);
+
                             }
                         }
                     }

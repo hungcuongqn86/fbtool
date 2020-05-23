@@ -91,6 +91,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DialogBox\Confirm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DialogBox\ImportLink.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -119,6 +123,9 @@
     </Compile>
     <Compile Include="DialogBox\AddProfile.xaml.cs">
       <DependentUpon>AddProfile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DialogBox\Confirm.xaml.cs">
+      <DependentUpon>Confirm.xaml</DependentUpon>
     </Compile>
     <Compile Include="DialogBox\ImportLink.xaml.cs">
       <DependentUpon>ImportLink.xaml</DependentUpon>

@@ -43,13 +43,6 @@
                     <DataGridTemplateColumn Header="">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Click="genPass2">Lấy mật khẩu cấp 2</Button>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
                                 <Button Click="AddBmClick">Thêm BM</Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
