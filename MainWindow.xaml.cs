@@ -198,7 +198,7 @@ namespace fbtool
             dlg.ShowDialog();
             if (dlg.DialogResult == true)
             {
-
+                LoadLink();
             }
         }
 

@@ -50,7 +50,7 @@ namespace fbtool.DialogBox
             DialogResult = false;
         }
 
-        private void okButton_Click(object sender, RoutedEventArgs e)
+        private async void okButton_Click(object sender, RoutedEventArgs e)
         {
             // Don't accept the dialog box if there is invalid data
             if (!IsValid(this)) return;
@@ -63,7 +63,7 @@ namespace fbtool.DialogBox
                 while ((line = reader.ReadLine()) != null)
                 {
                     // Do something with the line
-                    addLink(line);
+                    await addLink(line);
                 }
             }
 
@@ -71,7 +71,7 @@ namespace fbtool.DialogBox
             DialogResult = true;
         }
 
-        private async void addLink(string line)
+        private async Task addLink(string line)
         {
             string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
             // Update
