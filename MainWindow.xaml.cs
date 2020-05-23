@@ -441,18 +441,16 @@ namespace fbtool
 
         private async Task AddOneBm(Profile profile, int index)
         {
-            // Open link
-            string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
-            Link curentLink = _returnedLinks.ElementAt(index);
-            chromeDriver.Navigate().GoToUrl(curentLink.Url);
-            waitLoading();
-            WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(10));
-            ReadOnlyCollection<IWebElement> fullNameE = chromeDriver.FindElements(By.Name("fullName"));
-            if (fullNameE.Count > 0)
+            try
             {
-                // Input full name
-                String fullName = "A " + GetRandomAlphaNumeric();
-                fullNameE.ElementAt(0).SendKeys(fullName);
+                // Open link
+                string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
+                Link curentLink = _returnedLinks.ElementAt(index);
+                chromeDriver.Navigate().GoToUrl(curentLink.Url);
+                waitLoading();
+                WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(10));
+                ReadOnlyCollection<IWebElement> fullNameE = chromeDriver.FindElements(By.Name("fullName"));
+
                 // wait button enable
                 Func<IWebDriver, bool> waitForContBtnEnable = new Func<IWebDriver, bool>((IWebDriver Web) =>
                 {
@@ -465,62 +463,115 @@ namespace fbtool
                     }
                     return false;
                 });
-                wait.Until(waitForContBtnEnable);
 
-                // Click button
-                chromeDriver.FindElement(By.TagName("button")).Click();
-
-                // wait password
-                Func<IWebDriver, bool> waitForPassword = new Func<IWebDriver, bool>((IWebDriver Web) =>
+                if (fullNameE.Count > 0)
                 {
-                    Console.WriteLine("Waiting for password");
-                    IWebElement element = Web.FindElement(By.TagName("input"));
-                    if (element.GetAttribute("type").Equals("password"))
+                    // Input full name
+                    String fullName = "A " + GetRandomAlphaNumeric();
+                    fullNameE.ElementAt(0).SendKeys(fullName);
+                    wait.Until(waitForContBtnEnable);
+
+                    // Click button
+                    chromeDriver.FindElement(By.TagName("button")).Click();
+
+                    // wait password
+                    Func<IWebDriver, bool> waitForPassword = new Func<IWebDriver, bool>((IWebDriver Web) =>
                     {
-                        return true;
-                    }
-                    return false;
-                });
-                wait.Until(waitForPassword);
-                // MessageBox.Show("password!");
+                        Console.WriteLine("Waiting for password");
+                        IWebElement element = Web.FindElement(By.TagName("input"));
+                        if (element.GetAttribute("type").Equals("password"))
+                        {
+                            return true;
+                        }
+                        return false;
+                    });
+                    wait.Until(waitForPassword);
+                    // MessageBox.Show("password!");
 
-                // Input pass
-                chromeDriver.FindElement(By.XPath("//input[@type='password']")).SendKeys(profile.Password);
+                    // Input pass
+                    chromeDriver.FindElement(By.XPath("//input[@type='password']")).SendKeys(profile.Password);
 
-                // wait button enable
-                wait.Until(waitForContBtnEnable);
-                // MessageBox.Show("button enable!");
-                chromeDriver.FindElement(By.TagName("button")).Click();
+                    // wait button enable
+                    wait.Until(waitForContBtnEnable);
+                    // MessageBox.Show("button enable!");
+                    chromeDriver.FindElement(By.TagName("button")).Click();
+                    waitLoading();
+                    // Update link status
+                    curentLink.Status = 1;
+                    curentLink.Profile = profile.Fid;
+                    await firebase
+                      .Child("link/" + serverName)
+                      .Child(curentLink.Key)
+                      .PutAsync(curentLink);
+                } else {
+                    // wait button enable
+                    wait.Until(waitForContBtnEnable);
+                    // MessageBox.Show("button enable!");
+                    chromeDriver.FindElement(By.TagName("button")).Click();
+                    waitLoading();
+                    // Update link status
+                    curentLink.Status = 1;
+                    await firebase
+                      .Child("link/" + serverName)
+                      .Child(curentLink.Key)
+                      .PutAsync(curentLink);
+                }
 
-                // wait ok
-                Func<IWebDriver, bool> waitForOk = new Func<IWebDriver, bool>((IWebDriver Web) =>
-                {
-                    Console.WriteLine("Waiting for ok");
-                    IWebElement element = Web.FindElement(By.TagName("input"));
-                    if (element.GetAttribute("type").Equals("password"))
-                    {
-                        return true;
-                    }
-                    return false;
-                });
-                wait.Until(waitForOk);
-
-                // Update link status
-                curentLink.Status = 1;
-                curentLink.Profile = profile.Fid;
-                await firebase
-                  .Child("link/" + serverName)
-                  .Child(curentLink.Key)
-                  .PutAsync(curentLink);
+                AddAdAccount();
             }
-            else
+            catch
             {
-                // Update link status
-                curentLink.Status = 1;
-                await firebase
-                  .Child("link/" + serverName)
-                  .Child(curentLink.Key)
-                  .PutAsync(curentLink);
+                
+            }
+        }
+        private void AddAdAccount()
+        {
+            try
+            {
+                waitLoading();
+                // If not die
+                ReadOnlyCollection<IWebElement> errAlert = chromeDriver.FindElements(By.XPath("//div[@class='_29dy']"));
+                if (errAlert.Count == 0)
+                {
+                    // Get id
+                    string businessId = "";
+                    string curUrl = chromeDriver.Url;
+                    var queryString = curUrl.Split('?').Last();
+                    var JIDArrVal = queryString.Split('&');
+                    foreach (string item in JIDArrVal)
+                    {
+                        var itemSplit = item.Split('=');
+                        if (itemSplit.Length > 1)
+                        {
+                            if (itemSplit[0] == "business_id")
+                            {
+                                businessId = itemSplit[1];
+                            }
+                        }
+                    }
+                    chromeDriver.Url = "https://business.facebook.com/settings/ad-accounts?business_id=" + businessId;
+                    chromeDriver.Navigate();
+                    waitLoading();
+
+                    curUrl = chromeDriver.Url;
+                    if (curUrl.Contains("/ad-accounts?business_id="))
+                    {
+                        // addbtn js_n7
+                        ReadOnlyCollection<IWebElement> contBtnch1 = chromeDriver.FindElements(By.XPath("//button[contains(@class, '_7tv3')]/div[@class='_43rl']/div[@class='_43rm']"));
+                        if (contBtnch1.Count > 0)
+                        {
+                            IWebElement contBtnch2 = contBtnch1.ElementAt(0).FindElement(By.XPath(".."));
+                            IWebElement contBtnch = contBtnch2.FindElement(By.XPath(".."));
+
+                            contBtnch.Click();
+                            // 
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
             }
         }
 

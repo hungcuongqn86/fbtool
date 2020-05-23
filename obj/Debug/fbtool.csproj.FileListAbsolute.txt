@@ -93,3 +93,4 @@ D:\cuongnh\fbtool\obj\Debug\DialogBox\ImportLink.g.cs
 D:\cuongnh\fbtool\obj\Debug\DialogBox\ImportLink.baml
 D:\cuongnh\fbtool\obj\Debug\DialogBox\AddBm.g.cs
 D:\cuongnh\fbtool\obj\Debug\DialogBox\AddBm.baml
+D:\cuongnh\fbtool\obj\Debug\fbtool.csprojAssemblyReference.cache
