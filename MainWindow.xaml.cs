@@ -46,8 +46,7 @@ namespace fbtool
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        ObservableCollection<Link> _returnedLinks = new ObservableCollection<Link>();
-
+        List<Link> _returnedLinks = new List<Link>();
         ObservableCollection<Profile> _returnedProfiles = new ObservableCollection<Profile>();
 
         public MainWindow()
@@ -61,9 +60,8 @@ namespace fbtool
                 AuthTokenAsyncFactory = () => Task.FromResult(firebaseSecretKey)
             });
             LoadProfile();
-            LoadLink();
-            dgLink.ItemsSource = _returnedLinks;
             dgProfile.ItemsSource = _returnedProfiles;
+            LoadLink();
         }
 
         private void Setup()
@@ -115,51 +113,22 @@ namespace fbtool
             // subscription.Dispose();
         }
 
-        private void LoadLink()
+        private async void LoadLink()
         {
             string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
-            _returnedLinks.Clear();
-            var child = firebase.Child("link/" + serverName);
-            var observable = child.AsObservable<Link>();
-            var subscription = observable
-                .Where(f => !string.IsNullOrEmpty(f.Key)).ObserveOn(SynchronizationContext.Current)
-                .Subscribe(f => {
-                    if (f.EventType == Firebase.Database.Streaming.FirebaseEventType.Delete)
-                    {
-                        // record deleted - remove from ObservableCollection
-                        _returnedLinks.Remove(f.Object);
-                    }
-
-                    if (f.EventType == Firebase.Database.Streaming.FirebaseEventType.InsertOrUpdate)
-                    {
-                        // see if the inserted/updated object is already in our ObservableCollection
-                        var found = _returnedLinks.FirstOrDefault(i => i.Url == f.Object.Url);
-                        if (found == null)
-                        {
-                            //  is NOT in the observableCollection - add it
-                            if (f.Object.Status == 0)
-                            {
-                                f.Object.Key = f.Key;
-                                _returnedLinks.Add(f.Object);
-                            }
-                        }
-                        else
-                        {
-                            int tempIndex = _returnedLinks.IndexOf(found);
-                            // event was updated 
-                            if (f.Object.Status == 0)
-                            {
-                                f.Object.Key = f.Key;
-                                _returnedLinks[tempIndex] = f.Object;
-                            }
-                            else
-                            {
-                                _returnedLinks.Remove(f.Object);
-                            }
-                        }
-                    }
-                });
-            // subscription.Dispose();
+            var linkData = await firebase.Child("link/" + serverName)
+                .OrderByKey().OnceAsync<Link>();
+            List<Link> links = new List<Link>();
+            foreach (var link in linkData)
+            {
+                if (link.Object.Status == 0)
+                {
+                    link.Object.Key = link.Key;
+                    links.Add(link.Object);
+                }
+            }
+            _returnedLinks = links;
+            dgLink.ItemsSource = links;
         }
 
         private async void MnuNewProfile_Click(object sender, RoutedEventArgs e)
@@ -430,16 +399,20 @@ namespace fbtool
             dlg.ShowDialog();
             if (dlg.DialogResult == true)
             {
-                accessLinkAsync(sender, dlg.Data.Count);
+                if (dlg.Data.Count > 0)
+                {
+                    AddBm(sender, dlg.Data.Count);
+                }
             }
         }
 
-        private async void accessLinkAsync(object sender, int count)
+        private void AddBm(object sender, int count)
         {
             if (chromeDriver != null)
             {
                 chromeDriver.Quit();
             }
+
             Profile profile = ((FrameworkElement)sender).DataContext as Profile;
             ChromeOptions options = new ChromeOptions();
             string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
@@ -449,23 +422,37 @@ namespace fbtool
             chromeDriver.Url = "https://business.facebook.com/select/";
             chromeDriver.Navigate();
             waitLoading();
+
             // If login
             string url = chromeDriver.Url;
             if (!url.Contains("https://business.facebook.com/login.php"))
             {
-                // Open link
-                Link curentLink = _returnedLinks.First();
-                chromeDriver.Navigate().GoToUrl(curentLink.Url);
-                waitLoading();
-                WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(10));
-                ReadOnlyCollection<IWebElement> fullNameE = chromeDriver.FindElements(By.Name("fullName"));
-                if (fullNameE.Count > 0)
+                for (int i = 0; i < count; i++)
                 {
-                    // Input full name
-                    String fullName = "A " + GetRandomAlphaNumeric();
-                    fullNameE.ElementAt(0).SendKeys(fullName);
+                    System.Threading.Thread.Sleep(3000);
+                    AddOneBm(profile, i);
                 }
+            }
+            System.Threading.Thread.Sleep(3000);
+            chromeDriver.Quit();
+            LoadLink();
+            MessageBox.Show("Done!");
+        }
 
+        private async void AddOneBm(Profile profile, int index)
+        {
+            // Open link
+            string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
+            Link curentLink = _returnedLinks.ElementAt(index);
+            chromeDriver.Navigate().GoToUrl(curentLink.Url);
+            waitLoading();
+            WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(10));
+            ReadOnlyCollection<IWebElement> fullNameE = chromeDriver.FindElements(By.Name("fullName"));
+            if (fullNameE.Count > 0)
+            {
+                // Input full name
+                String fullName = "A " + GetRandomAlphaNumeric();
+                fullNameE.ElementAt(0).SendKeys(fullName);
                 // wait button enable
                 Func<IWebDriver, bool> waitForContBtnEnable = new Func<IWebDriver, bool>((IWebDriver Web) =>
                 {
@@ -506,14 +493,22 @@ namespace fbtool
                 chromeDriver.FindElement(By.TagName("button")).Click();
 
                 // Update link status
-                string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
+                curentLink.Status = 1;
+                curentLink.Profile = profile.Fid;
+                await firebase
+                  .Child("link/" + serverName)
+                  .Child(curentLink.Key)
+                  .PutAsync(curentLink);
+            }
+            else
+            {
+                // Update link status
                 curentLink.Status = 1;
                 await firebase
                   .Child("link/" + serverName)
                   .Child(curentLink.Key)
                   .PutAsync(curentLink);
             }
-            chromeDriver.Quit();
         }
 
         private void genPass2(object sender, RoutedEventArgs e)

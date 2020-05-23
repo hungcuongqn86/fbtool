@@ -27,7 +27,6 @@ namespace fbtool.DialogBox
     public partial class ImportLink : Window, INotifyPropertyChanged
     {
         FirebaseClient firebase;
-        ChromeDriver chromeDriver;
         public ImportLink()
         {
             InitializeComponent();

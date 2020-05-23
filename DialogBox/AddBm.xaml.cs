@@ -25,7 +25,6 @@ namespace fbtool.DialogBox
     public partial class AddBm : Window, INotifyPropertyChanged
     {
         FirebaseClient firebase;
-        ChromeDriver chromeDriver;
         public AddBm()
         {
             InitializeComponent();

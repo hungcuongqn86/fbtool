@@ -52,7 +52,7 @@
         </Grid.RowDefinitions>
 
         <!-- Facebook -->
-        <Label Grid.Column="0" Grid.Row="0">Data:</Label>
+        <Label Grid.Column="0" Grid.Row="0">Số lượng:</Label>
         <TextBox Name="viadata" Grid.Column="1" Grid.Row="0"
                     Text="{Binding Count, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
 

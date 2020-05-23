@@ -67,7 +67,6 @@ D:\cuongnh\fbtool\bin\Debug\LiteDB.xml
 D:\cuongnh\fbtool\bin\Debug\Newtonsoft.Json.xml
 D:\cuongnh\fbtool\bin\Debug\System.Reactive.xml
 D:\cuongnh\fbtool\bin\Debug\WebDriver.xml
-D:\cuongnh\fbtool\obj\Debug\fbtool.csprojAssemblyReference.cache
 D:\cuongnh\fbtool\obj\Debug\DialogBox\AddLink.g.cs
 D:\cuongnh\fbtool\obj\Debug\DialogBox\AddProfile.g.cs
 D:\cuongnh\fbtool\obj\Debug\DialogBox\ImportProfile.g.cs
