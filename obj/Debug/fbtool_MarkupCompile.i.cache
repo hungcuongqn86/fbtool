@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\App\FBTOOL\facebooktool\obj\Debug\
+D:\cuongnh\fbtool\obj\Debug\
 fbtool
 none
 false
 DEBUG;TRACE
-D:\App\FBTOOL\facebooktool\App.xaml
-62008925665
+D:\cuongnh\fbtool\App.xaml
+71257514750
 
-151442622358
-241867972367
-DialogBox\AddLink.xaml;DialogBox\AddProfile.xaml;DialogBox\ImportProfile.xaml;DialogBox\ServerNameSetting.xaml;MainWindow.xaml;Resources\Style.xaml;
+17-564336486
+24-1263688714
+DialogBox\AddLink.xaml;DialogBox\AddProfile.xaml;DialogBox\ImportLink.xaml;DialogBox\ImportProfile.xaml;DialogBox\ServerNameSetting.xaml;MainWindow.xaml;Resources\Style.xaml;
 
-True
+False
 

@@ -162,7 +162,7 @@ namespace fbtool
             // subscription.Dispose();
         }
 
-        private async void mnuNewProfile_Click(object sender, RoutedEventArgs e)
+        private async void MnuNewProfile_Click(object sender, RoutedEventArgs e)
         {
             // Instantiate the dialog box
             var dlg = new AddProfile
@@ -198,7 +198,7 @@ namespace fbtool
             }
         }
 
-        private async void mnuNewLink_Click(object sender, RoutedEventArgs e)
+        private async void MnuNewLink_Click(object sender, RoutedEventArgs e)
         {
             // Instantiate the dialog box
             var dlg = new AddLink
@@ -214,6 +214,22 @@ namespace fbtool
                 await firebase
                     .Child("link/" + serverName)
                     .PostAsync(new Link(dlg.Linkbd.Url, 0, "", ""));
+            }
+        }
+
+        private void MnuImportLink_Click(object sender, RoutedEventArgs e)
+        {
+            // Instantiate the dialog box
+            var dlg = new ImportLink
+            {
+                Owner = this
+            };
+
+            // Open the dialog box modally 
+            dlg.ShowDialog();
+            if (dlg.DialogResult == true)
+            {
+
             }
         }
 
