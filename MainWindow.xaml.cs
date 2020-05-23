@@ -53,6 +53,7 @@ namespace fbtool
         public MainWindow()
         {
             InitializeComponent();
+            Setup();
             string firebaseUrl = ConfigurationManager.AppSettings["FirebaseUrl"].ToString();
             string firebaseSecretKey = ConfigurationManager.AppSettings["FirebaseSecretKey"].ToString();
             firebase = new FirebaseClient(firebaseUrl, new FirebaseOptions
@@ -63,6 +64,20 @@ namespace fbtool
             LoadLink();
             dgLink.ItemsSource = _returnedLinks;
             dgProfile.ItemsSource = _returnedProfiles;
+        }
+
+        private void Setup()
+        {
+            string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
+            try
+            {
+                bool exists = System.IO.Directory.Exists(profilePath);
+                if (!exists)
+                    System.IO.Directory.CreateDirectory(profilePath);
+            }
+            catch {
+                MessageBox.Show("Lỗi, Không tạo được thư mục lưu profile!");
+            }
         }
 
         private void LoadProfile()
@@ -163,7 +178,7 @@ namespace fbtool
                 // Update
                 await firebase
                   .Child("profile/" + serverName + "/" + dlg.Profilebd.Fid)
-                  .PutAsync(new Profile(dlg.Profilebd.Fid, dlg.Profilebd.Password, dlg.Profilebd.SecretKey));
+                  .PutAsync(new Profile(dlg.Profilebd.Fid, dlg.Profilebd.Password, dlg.Profilebd.SecretKey, 1));
             }
         }
 
@@ -184,6 +199,25 @@ namespace fbtool
         }
 
         private async void mnuNewLink_Click(object sender, RoutedEventArgs e)
+        {
+            // Instantiate the dialog box
+            var dlg = new AddLink
+            {
+                Owner = this
+            };
+
+            // Open the dialog box modally 
+            dlg.ShowDialog();
+            if (dlg.DialogResult == true)
+            {
+                string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
+                await firebase
+                    .Child("link/" + serverName)
+                    .PostAsync(new Link(dlg.Linkbd.Url, 0, "", ""));
+            }
+        }
+
+        private async void RemoveAccount(object sender, RoutedEventArgs e)
         {
             // Instantiate the dialog box
             var dlg = new AddLink
@@ -260,7 +294,6 @@ namespace fbtool
             chromeDriver.Navigate();
             waitLoading();
 
-            WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(15));
             ReadOnlyCollection<IWebElement> table = chromeDriver.FindElements(By.XPath("//div[@class='_3-8-']/table[contains(@class, 'uiGrid')]"));
             if (table.Count > 0)
             {

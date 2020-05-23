@@ -91,6 +91,7 @@ namespace fbtool.DialogBox
         private async void addVia(string line)
         {
             string[] viadetail = line.Split('|');
+            short status = 0;
             if (viadetail.Length == 3)
             {
                 if (chromeDriver != null)
@@ -125,7 +126,9 @@ namespace fbtool.DialogBox
                     saveBrowser();
                     waitLoading();
                 }
-                await saveToDbAsync(viadetail[0], viadetail[1], viadetail[2]);
+                // Check success
+
+                await saveToDbAsync(viadetail[0], viadetail[1], viadetail[2], status);
             }
         }
 
@@ -136,13 +139,13 @@ namespace fbtool.DialogBox
             return totp.ComputeTotp();
         }
 
-        private async Task saveToDbAsync(string id, string pass, string secretKey)
+        private async Task saveToDbAsync(string id, string pass, string secretKey, short status)
         {
             string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
             // Update
             await firebase
               .Child("profile/" + serverName + "/" + id)
-              .PutAsync(new Profile(id, pass, secretKey));
+              .PutAsync(new Profile(id, pass, secretKey, status));
         }
 
         private void pass2Submit(string secretKey)

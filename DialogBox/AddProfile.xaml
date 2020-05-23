@@ -61,12 +61,12 @@
 
         <!-- Password -->
         <Label Grid.Column="0" Grid.Row="1">Password:</Label>
-        <TextBox Name="PasswordTextBox" Grid.Column="1" Grid.Row="2" Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+        <TextBox Name="PasswordTextBox" Grid.Column="1" Grid.Row="1" Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
 
         <!-- Profile Path -->
-        <Label Grid.Column="0" Grid.Row="2">Profile:</Label>
-        <TextBox Name="ProfilePathTextBox" Grid.Column="1" Grid.Row="3" Text="{Binding SecretKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+        <Label Grid.Column="0" Grid.Row="2">SecretKey:</Label>
+        <TextBox Name="ProfilePathTextBox" Grid.Column="1" Grid.Row="2" Text="{Binding SecretKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
 
         <!-- Accept or Cancel -->

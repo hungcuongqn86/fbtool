@@ -51,7 +51,7 @@ namespace fbtool.DialogBox
             // Don't accept the dialog box if there is invalid data
             if (!IsValid(this)) return;
 
-            if (!string.IsNullOrEmpty(Settingbd.ServerName))
+            /*if (!string.IsNullOrEmpty(Settingbd.ServerName))
             {
                 UpdateConfigKey("ServerName", Settingbd.ServerName);
             }
@@ -59,7 +59,7 @@ namespace fbtool.DialogBox
             if (!string.IsNullOrEmpty(Settingbd.ProfilePath))
             {
                 UpdateConfigKey("ProfilePath", Settingbd.ProfilePath);
-            }
+            }*/
 
             // Dialog box accepted
             DialogResult = true;
