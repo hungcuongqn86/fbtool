@@ -81,6 +81,7 @@ namespace fbtool.DialogBox
                     chromeDriver.Close();
                     System.Threading.Thread.Sleep(2000);
                     chromeDriver.Quit();
+                    MessageBox.Show("Done");
                 }
             }
 

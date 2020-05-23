@@ -406,7 +406,7 @@ namespace fbtool
             }
         }
 
-        private void AddBm(object sender, int count)
+        private async void AddBm(object sender, int count)
         {
             if (chromeDriver != null)
             {
@@ -430,16 +430,16 @@ namespace fbtool
                 for (int i = 0; i < count; i++)
                 {
                     System.Threading.Thread.Sleep(3000);
-                    AddOneBm(profile, i);
+                    await AddOneBm(profile, i);
                 }
             }
-            System.Threading.Thread.Sleep(3000);
+            waitLoading();
             chromeDriver.Quit();
             LoadLink();
             MessageBox.Show("Done!");
         }
 
-        private async void AddOneBm(Profile profile, int index)
+        private async Task AddOneBm(Profile profile, int index)
         {
             // Open link
             string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
@@ -491,6 +491,19 @@ namespace fbtool
                 wait.Until(waitForContBtnEnable);
                 // MessageBox.Show("button enable!");
                 chromeDriver.FindElement(By.TagName("button")).Click();
+
+                // wait ok
+                Func<IWebDriver, bool> waitForOk = new Func<IWebDriver, bool>((IWebDriver Web) =>
+                {
+                    Console.WriteLine("Waiting for ok");
+                    IWebElement element = Web.FindElement(By.TagName("input"));
+                    if (element.GetAttribute("type").Equals("password"))
+                    {
+                        return true;
+                    }
+                    return false;
+                });
+                wait.Until(waitForOk);
 
                 // Update link status
                 curentLink.Status = 1;
