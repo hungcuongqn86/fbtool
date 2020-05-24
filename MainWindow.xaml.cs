@@ -62,6 +62,7 @@ namespace fbtool
             LoadProfile();
             dgProfile.ItemsSource = _returnedProfiles;
             LoadLink();
+            AddAdAccount();
         }
 
         private void Setup()
@@ -496,6 +497,7 @@ namespace fbtool
                     wait.Until(waitForContBtnEnable);
                     // MessageBox.Show("button enable!");
                     chromeDriver.FindElement(By.TagName("button")).Click();
+                    System.Threading.Thread.Sleep(5000);
                     waitLoading();
                     // Update link status
                     curentLink.Status = 1;
@@ -509,6 +511,7 @@ namespace fbtool
                     wait.Until(waitForContBtnEnable);
                     // MessageBox.Show("button enable!");
                     chromeDriver.FindElement(By.TagName("button")).Click();
+                    System.Threading.Thread.Sleep(5000);
                     waitLoading();
                     // Update link status
                     curentLink.Status = 1;
@@ -522,13 +525,22 @@ namespace fbtool
             }
             catch
             {
-                
+                throw;
             }
         }
         private void AddAdAccount()
         {
             try
             {
+                ChromeOptions options = new ChromeOptions();
+                string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
+                options.AddArgument("--user-data-dir=" + profilePath);
+                options.AddArgument("profile-directory=100002333178177");
+                chromeDriver = new ChromeDriver(options);
+                chromeDriver.Url = "https://business.facebook.com/home/accounts?business_id=143842403881175";
+                //chromeDriver.Url = "https://business.facebook.com/home/accounts?business_id=141461017475330";
+                chromeDriver.Navigate();
+
                 waitLoading();
                 // If not die
                 ReadOnlyCollection<IWebElement> errAlert = chromeDriver.FindElements(By.XPath("//div[@class='_29dy']"));
@@ -553,27 +565,83 @@ namespace fbtool
                     chromeDriver.Url = "https://business.facebook.com/settings/ad-accounts?business_id=" + businessId;
                     chromeDriver.Navigate();
                     waitLoading();
+                    System.Threading.Thread.Sleep(5000);
 
                     curUrl = chromeDriver.Url;
                     if (curUrl.Contains("/ad-accounts?business_id="))
                     {
                         // addbtn js_n7
-                        ReadOnlyCollection<IWebElement> contBtnch1 = chromeDriver.FindElements(By.XPath("//button[contains(@class, '_7tv3')]/div[@class='_43rl']/div[@class='_43rm']"));
-                        if (contBtnch1.Count > 0)
+                        ReadOnlyCollection<IWebElement> uiPopover = chromeDriver.FindElements(By.XPath("//div[contains(@class, 'uiPopover')]"));
+                        if (uiPopover.Count > 0)
                         {
-                            IWebElement contBtnch2 = contBtnch1.ElementAt(0).FindElement(By.XPath(".."));
-                            IWebElement contBtnch = contBtnch2.FindElement(By.XPath(".."));
-
-                            contBtnch.Click();
-                            // 
-                            System.Threading.Thread.Sleep(3000);
-                            ReadOnlyCollection<IWebElement> contBtaddAd = chromeDriver.FindElements(By.XPath("//div[@data-testid='AddAssetButton-brands/createIcon']"));
-                            if (contBtaddAd.Count > 0)
+                            ReadOnlyCollection<IWebElement> contBtnch = uiPopover.ElementAt(0).FindElements(By.TagName("button"));
+                            if (contBtnch.Count > 0)
                             {
-                                contBtaddAd.ElementAt(0).Click();
-                                // input
+                                contBtnch.ElementAt(0).Click();
+                                // 
                                 System.Threading.Thread.Sleep(3000);
+                                ReadOnlyCollection<IWebElement> contBtaddAd = chromeDriver.FindElements(By.XPath("//ul[@class='_54nf' or contains(@class, '_2pi2')]/li"));
+                                if (contBtaddAd.Count > 0)
+                                {
+                                    contBtaddAd.Last().Click();
+                                    // input
+                                    System.Threading.Thread.Sleep(5000);
 
+                                    ReadOnlyCollection<IWebElement> dialogf = chromeDriver.FindElements(By.XPath("//div[@class='_59s7' and @role='dialog']/div[@class='_4t2a']"));
+                                    if (dialogf.Count > 0)
+                                    {
+                                        DateTime dateTime = DateTime.Now;
+                                        ReadOnlyCollection<IWebElement> nameInput = dialogf.ElementAt(0).FindElements(By.XPath("//input[@type='text' and contains(@class, '_2gnb')]"));
+                                        if (nameInput.Count > 0)
+                                        {
+                                            nameInput.ElementAt(0).SendKeys(dateTime.ToString("yyyyMMdd_HHmmss"));
+                                            System.Threading.Thread.Sleep(3000);
+                                        }
+
+                                        // currency phien ban 1
+                                        ReadOnlyCollection<IWebElement> currencyInput = dialogf.ElementAt(0).FindElements(By.Name("currency"));
+                                        if (currencyInput.Count > 0)
+                                        {
+                                            currencyInput.ElementAt(0).FindElement(By.XPath("..")).Click();
+                                            System.Threading.Thread.Sleep(3000);
+
+                                            ReadOnlyCollection<IWebElement> currencyEur = chromeDriver.FindElements(By.XPath("//a[@class='_54nc' and @title='EUR']"));
+                                            if (currencyEur.Count > 0)
+                                            {
+                                                currencyEur.ElementAt(0).FindElement(By.XPath("..")).Click();
+                                                System.Threading.Thread.Sleep(3000);
+                                            }
+                                        }
+
+                                        // currency phien ban 2
+
+                                        // nhan button
+                                        ReadOnlyCollection<IWebElement> layerButton = chromeDriver.FindElements(By.XPath("//button[contains(@class, 'layerButton')]/div[@class='_43rl']/div[@class='_43rm']"));
+                                        if (layerButton.Count > 0)
+                                        {
+                                            layerButton.Last().Click();
+                                            System.Threading.Thread.Sleep(3000);
+                                            waitLoading();
+                                            // Chon radiobtn
+                                            // nhan button
+                                            ReadOnlyCollection<IWebElement> radioButton = chromeDriver.FindElements(By.XPath("//div[@class='_88ly']/input[@type='radio' and @value!='OBO_ACCOUNT_SELECTION']"));
+                                            if (radioButton.Count > 0)
+                                            {
+                                                radioButton.ElementAt(0).Click();
+                                                System.Threading.Thread.Sleep(3000);
+
+                                                // create btn
+                                                ReadOnlyCollection<IWebElement> createButton = chromeDriver.FindElements(By.XPath("//span[@class='_4iyi']/div/div/button"));
+                                                if (createButton.Count > 0)
+                                                {
+                                                    createButton.Last().Click();
+                                                    System.Threading.Thread.Sleep(3000);
+                                                    waitLoading();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -581,7 +649,7 @@ namespace fbtool
             }
             catch
             {
-
+                throw;
             }
         }
 

@@ -97,6 +97,6 @@ D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\AddBm.g.cs
 D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\ImportLink.g.cs
 D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\AddBm.baml
 D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\ImportLink.baml
-D:\App\FBTOOL\facebooktool\obj\Debug\fbtool.csprojAssemblyReference.cache
 D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\Confirm.g.cs
 D:\App\FBTOOL\facebooktool\obj\Debug\DialogBox\Confirm.baml
+D:\App\FBTOOL\facebooktool\obj\Debug\fbtool.csprojAssemblyReference.cache
