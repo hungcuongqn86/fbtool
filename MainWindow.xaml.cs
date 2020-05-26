@@ -62,7 +62,7 @@ namespace fbtool
             LoadProfile();
             dgProfile.ItemsSource = _returnedProfiles;
             LoadLink();
-            AdAccountSetRole();
+            // AdAccountSetRole();
         }
 
         private void Setup()
@@ -156,6 +156,22 @@ namespace fbtool
         {
             // Instantiate the dialog box
             var dlg = new ImportProfile
+            {
+                Owner = this
+            };
+
+            // Open the dialog box modally 
+            dlg.ShowDialog();
+            if (dlg.DialogResult == true)
+            {
+
+            }
+        }
+
+        private void MainBMSetup_Click(object sender, RoutedEventArgs e)
+        {
+            // Instantiate the dialog box
+            var dlg = new MainBm
             {
                 Owner = this
             };

@@ -103,6 +103,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DialogBox\MainBm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DialogBox\ServerNameSetting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -132,6 +136,9 @@
     </Compile>
     <Compile Include="DialogBox\ImportProfile.xaml.cs">
       <DependentUpon>ImportProfile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DialogBox\MainBm.xaml.cs">
+      <DependentUpon>MainBm.xaml</DependentUpon>
     </Compile>
     <Compile Include="DialogBox\ServerNameSetting.xaml.cs">
       <DependentUpon>ServerNameSetting.xaml</DependentUpon>

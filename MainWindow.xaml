@@ -19,6 +19,7 @@
             <MenuItem Header="_Link BM">
                 <MenuItem Header="_Add" Click="MnuNewLink_Click"></MenuItem>
                 <MenuItem Header="_Import" Click="MnuImportLink_Click"></MenuItem>
+                <MenuItem Header="_BM Chủ" Click="MainBMSetup_Click"></MenuItem>
             </MenuItem>
         </Menu>
         <Grid>
