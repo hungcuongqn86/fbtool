@@ -697,13 +697,41 @@ namespace fbtool
                 waitLoading();
                 System.Threading.Thread.Sleep(5000);
 
+                ReadOnlyCollection<IWebElement> iOpenDialogButton = chromeDriver.FindElements(By.XPath("//i[contains(@class, 'sx_06e8f5') and contains(@class, 'sp_sKNPwWQSeuO')]"));
+                iOpenDialogButton.ElementAt(0).FindElement(By.XPath("..")).FindElement(By.XPath("..")).Click();
+                System.Threading.Thread.Sleep(8000);
+
+                //---------------------------
 
                 ReadOnlyCollection<IWebElement> allAccountRadioButton = chromeDriver.FindElements(By.XPath("//div[contains(@class, '_kx6') and contains(@class, '_kxa')]"));
                 if (allAccountRadioButton.Count > 0)
                 {
                     allAccountRadioButton.First().Click();
-                    System.Threading.Thread.Sleep(3000);
+                    System.Threading.Thread.Sleep(5000);
                     waitLoading();
+                    ReadOnlyCollection<IWebElement> switchRadioButton = chromeDriver.FindElements(By.XPath("//div[contains(@class, '_3qn7')]/div[contains(@class, '_3qn7')]/div[contains(@class, '_88ly')]"));
+                    if (switchRadioButton.Count > 0)
+                    {
+                        switchRadioButton.Last().Click();
+                        System.Threading.Thread.Sleep(5000);
+                        waitLoading();
+
+                        ReadOnlyCollection<IWebElement> setRoleButton = chromeDriver.FindElements(By.XPath("//span[@class='_4iyi']/div/div/button"));
+                        if (setRoleButton.Count > 0)
+                        {
+                            setRoleButton.First().Click();
+                            System.Threading.Thread.Sleep(5000);
+                            waitLoading();
+                        }
+
+                        ReadOnlyCollection<IWebElement> setRoleButtonR = chromeDriver.FindElements(By.XPath("//span[@class='_4iyi']/div/div/button"));
+                        if (setRoleButtonR.Count > 0)
+                        {
+                            setRoleButtonR.First().Click();
+                            System.Threading.Thread.Sleep(5000);
+                            waitLoading();
+                        }
+                    }
                 }
             }
             catch
