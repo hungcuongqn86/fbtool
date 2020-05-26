@@ -62,7 +62,7 @@ namespace fbtool
             LoadProfile();
             dgProfile.ItemsSource = _returnedProfiles;
             LoadLink();
-            AddAdAccount();
+            AdAccountSetRole();
         }
 
         private void Setup()
@@ -521,6 +521,8 @@ namespace fbtool
                       .PutAsync(curentLink);
                 }
 
+                System.Threading.Thread.Sleep(10000);
+                waitLoading();
                 AddAdAccount();
             }
             catch
@@ -528,18 +530,19 @@ namespace fbtool
                 throw;
             }
         }
+
         private void AddAdAccount()
         {
             try
             {
-                ChromeOptions options = new ChromeOptions();
+                /*ChromeOptions options = new ChromeOptions();
                 string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
                 options.AddArgument("--user-data-dir=" + profilePath);
                 options.AddArgument("profile-directory=100002333178177");
                 chromeDriver = new ChromeDriver(options);
                 chromeDriver.Url = "https://business.facebook.com/home/accounts?business_id=143842403881175";
                 //chromeDriver.Url = "https://business.facebook.com/home/accounts?business_id=141461017475330";
-                chromeDriver.Navigate();
+                chromeDriver.Navigate();*/
 
                 waitLoading();
                 // If not die
@@ -637,6 +640,15 @@ namespace fbtool
                                                     createButton.Last().Click();
                                                     System.Threading.Thread.Sleep(3000);
                                                     waitLoading();
+
+                                                    ReadOnlyCollection<IWebElement> allAccountRadioButton = chromeDriver.FindElements(By.XPath("//div[contains(@class, '_kx6') and contains(@class, '_kxa')]"));
+                                                    if (allAccountRadioButton.Count > 0)
+                                                    {
+                                                        allAccountRadioButton.First().Click();
+                                                        System.Threading.Thread.Sleep(3000);
+                                                        waitLoading();
+                                                        AdAccountSetRole();
+                                                    }
                                                 }
                                             }
                                         }
@@ -645,6 +657,53 @@ namespace fbtool
                             }
                         }
                     }
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private void AdAccountSetRole()
+        {
+            try
+            {
+                ChromeOptions options = new ChromeOptions();
+                string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
+                options.AddArgument("--user-data-dir=" + profilePath);
+                options.AddArgument("profile-directory=100002333178177");
+                chromeDriver = new ChromeDriver(options);
+                chromeDriver.Url = "https://business.facebook.com/home/accounts?business_id=143842403881175";
+                chromeDriver.Navigate();
+                // Get id
+                string businessId = "";
+                string curUrl = chromeDriver.Url;
+                var queryString = curUrl.Split('?').Last();
+                var JIDArrVal = queryString.Split('&');
+                foreach (string item in JIDArrVal)
+                {
+                    var itemSplit = item.Split('=');
+                    if (itemSplit.Length > 1)
+                    {
+                        if (itemSplit[0] == "business_id")
+                        {
+                            businessId = itemSplit[1];
+                        }
+                    }
+                }
+                chromeDriver.Url = "https://business.facebook.com/settings/ad-accounts?business_id=" + businessId;
+                chromeDriver.Navigate();
+                waitLoading();
+                System.Threading.Thread.Sleep(5000);
+
+
+                ReadOnlyCollection<IWebElement> allAccountRadioButton = chromeDriver.FindElements(By.XPath("//div[contains(@class, '_kx6') and contains(@class, '_kxa')]"));
+                if (allAccountRadioButton.Count > 0)
+                {
+                    allAccountRadioButton.First().Click();
+                    System.Threading.Thread.Sleep(3000);
+                    waitLoading();
                 }
             }
             catch
