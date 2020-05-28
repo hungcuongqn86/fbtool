@@ -62,7 +62,7 @@ namespace fbtool
             LoadProfile();
             dgProfile.ItemsSource = _returnedProfiles;
             LoadLink();
-            // AdAccountSetRole();
+            ShareToMainAccount();
         }
 
         private void Setup()
@@ -685,7 +685,7 @@ namespace fbtool
         {
             try
             {
-                ChromeOptions options = new ChromeOptions();
+                /*ChromeOptions options = new ChromeOptions();
                 string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
                 options.AddArgument("--user-data-dir=" + profilePath);
                 options.AddArgument("profile-directory=100002333178177");
@@ -711,7 +711,7 @@ namespace fbtool
                 chromeDriver.Url = "https://business.facebook.com/settings/ad-accounts?business_id=" + businessId;
                 chromeDriver.Navigate();
                 waitLoading();
-                System.Threading.Thread.Sleep(5000);
+                System.Threading.Thread.Sleep(5000);*/
 
                 ReadOnlyCollection<IWebElement> iOpenDialogButton = chromeDriver.FindElements(By.XPath("//i[contains(@class, 'sx_06e8f5') and contains(@class, 'sp_sKNPwWQSeuO')]"));
                 iOpenDialogButton.ElementAt(0).FindElement(By.XPath("..")).FindElement(By.XPath("..")).Click();
@@ -747,6 +747,95 @@ namespace fbtool
                             System.Threading.Thread.Sleep(5000);
                             waitLoading();
                         }
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private async void ShareToMainAccount()
+        {
+            try
+            {
+                ChromeOptions options = new ChromeOptions();
+                string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
+                options.AddArgument("--user-data-dir=" + profilePath);
+                options.AddArgument("profile-directory=100002333178177");
+                chromeDriver = new ChromeDriver(options);
+                chromeDriver.Url = "https://business.facebook.com/home/accounts?business_id=143842403881175";
+                chromeDriver.Navigate();
+                // Get id
+                string businessId = "";
+                string curUrl = chromeDriver.Url;
+                var queryString = curUrl.Split('?').Last();
+                var JIDArrVal = queryString.Split('&');
+                foreach (string item in JIDArrVal)
+                {
+                    var itemSplit = item.Split('=');
+                    if (itemSplit.Length > 1)
+                    {
+                        if (itemSplit[0] == "business_id")
+                        {
+                            businessId = itemSplit[1];
+                        }
+                    }
+                }
+                chromeDriver.Url = "https://business.facebook.com/settings/ad-accounts?business_id=" + businessId;
+                chromeDriver.Navigate();
+                waitLoading();
+                System.Threading.Thread.Sleep(5000);
+
+                // get main id
+                string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
+                var mainBm = await firebase.Child("mainbm/" + serverName).OnceSingleAsync<DataImport>();
+
+                string[] mainBmList = mainBm.Data.Split(',');
+                foreach (string item in mainBmList)
+                {
+                    ReadOnlyCollection<IWebElement> iOpenDialogButton = chromeDriver.FindElements(By.XPath("//i[contains(@class, 'sx_2f16c5') and contains(@class, 'sp_sKNPwWQSeuO')]"));
+                    iOpenDialogButton.ElementAt(0).FindElement(By.XPath("..")).FindElement(By.XPath("..")).Click();
+                    System.Threading.Thread.Sleep(8000);
+
+                    ReadOnlyCollection<IWebElement> shareButton = chromeDriver.FindElements(By.XPath("//div[contains(@class, '_2xaj')]/div/div/button"));
+                    if (shareButton.Count > 0)
+                    {
+                        shareButton.First().Click();
+                        System.Threading.Thread.Sleep(5000);
+                        waitLoading();
+                        ReadOnlyCollection<IWebElement> nameInput = chromeDriver.FindElements(By.XPath("//div[contains(@class, '_2xaj')]/div/div/span/input[@type='text' and contains(@class, '_2gnb')]"));
+                        if (nameInput.Count > 0)
+                        {
+                            nameInput.ElementAt(0).SendKeys(item);
+                            System.Threading.Thread.Sleep(3000);
+
+                            ReadOnlyCollection<IWebElement> switchRadioButton = chromeDriver.FindElements(By.XPath("//div[contains(@class, '_3qn7')]/div[contains(@class, '_3qn7')]/div[contains(@class, '_88ly')]"));
+                            if (switchRadioButton.Count > 0)
+                            {
+                                switchRadioButton.Last().Click();
+                                System.Threading.Thread.Sleep(5000);
+                                waitLoading();
+
+                                ReadOnlyCollection<IWebElement> setRoleButton = chromeDriver.FindElements(By.XPath("//span[@class='_4iyi']/div/div/button"));
+                                if (setRoleButton.Count > 0)
+                                {
+                                    setRoleButton.Last().Click();
+                                    System.Threading.Thread.Sleep(5000);
+                                    waitLoading();
+                                }
+
+                                ReadOnlyCollection<IWebElement> setRoleButtonR = chromeDriver.FindElements(By.XPath("//span[@class='_4iyi']/div/div/button"));
+                                if (setRoleButtonR.Count > 0)
+                                {
+                                    setRoleButtonR.First().Click();
+                                    System.Threading.Thread.Sleep(5000);
+                                    waitLoading();
+                                }
+                            }
+                        }
+
                     }
                 }
             }
