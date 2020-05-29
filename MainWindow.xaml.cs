@@ -62,7 +62,7 @@ namespace fbtool
             LoadProfile();
             dgProfile.ItemsSource = _returnedProfiles;
             LoadLink();
-            ShareToMainAccount();
+            // ShareToMainAccount();
         }
 
         private void Setup()
@@ -241,14 +241,10 @@ namespace fbtool
 
         private void openProfile(object sender, RoutedEventArgs e)
         {
-            if (chromeDriver != null)
-            {
-                chromeDriver.Quit();
-            }
             Profile profile = ((FrameworkElement)sender).DataContext as Profile;
             ChromeOptions options = new ChromeOptions();
             string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
-            options.AddArgument("--user-data-dir=" + profilePath);
+            options.AddArgument("--user-data-dir=" + profilePath + "/" + profile.Fid);
             options.AddArgument("profile-directory=" + profile.Fid);
             options.AddArgument("--start-maximized");
             chromeDriver = new ChromeDriver(options);
@@ -289,7 +285,7 @@ namespace fbtool
             Profile profile = ((FrameworkElement)sender).DataContext as Profile;
             ChromeOptions options = new ChromeOptions();
             string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
-            options.AddArgument("--user-data-dir=" + profilePath);
+            options.AddArgument("--user-data-dir=" + profilePath + "/" + profile.Fid);
             options.AddArgument("profile-directory=" + profile.Fid);
             options.AddArgument("--start-maximized");
             chromeDriver = new ChromeDriver(options);
@@ -434,7 +430,7 @@ namespace fbtool
             Profile profile = ((FrameworkElement)sender).DataContext as Profile;
             ChromeOptions options = new ChromeOptions();
             string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
-            options.AddArgument("--user-data-dir=" + profilePath);
+            options.AddArgument("--user-data-dir=" + profilePath + "/" + profile.Fid);
             options.AddArgument("profile-directory=" + profile.Fid);
             chromeDriver = new ChromeDriver(options);
             chromeDriver.Url = "https://business.facebook.com/select/";
@@ -553,7 +549,7 @@ namespace fbtool
             {
                 /*ChromeOptions options = new ChromeOptions();
                 string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
-                options.AddArgument("--user-data-dir=" + profilePath);
+                options.AddArgument("--user-data-dir=" + profilePath + "/" + profile.Fid);
                 options.AddArgument("profile-directory=100002333178177");
                 chromeDriver = new ChromeDriver(options);
                 chromeDriver.Url = "https://business.facebook.com/home/accounts?business_id=143842403881175";
@@ -634,6 +630,8 @@ namespace fbtool
 
                                         // currency phien ban 2
 
+
+
                                         // nhan button
                                         ReadOnlyCollection<IWebElement> layerButton = chromeDriver.FindElements(By.XPath("//button[contains(@class, 'layerButton')]/div[@class='_43rl']/div[@class='_43rm']"));
                                         if (layerButton.Count > 0)
@@ -687,7 +685,7 @@ namespace fbtool
             {
                 /*ChromeOptions options = new ChromeOptions();
                 string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
-                options.AddArgument("--user-data-dir=" + profilePath);
+                options.AddArgument("--user-data-dir=" + profilePath + "/" + profile.Fid);
                 options.AddArgument("profile-directory=100002333178177");
                 chromeDriver = new ChromeDriver(options);
                 chromeDriver.Url = "https://business.facebook.com/home/accounts?business_id=143842403881175";
@@ -747,6 +745,8 @@ namespace fbtool
                             System.Threading.Thread.Sleep(5000);
                             waitLoading();
                         }
+
+                        ShareToMainAccount();
                     }
                 }
             }
@@ -762,7 +762,7 @@ namespace fbtool
             {
                 ChromeOptions options = new ChromeOptions();
                 string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
-                options.AddArgument("--user-data-dir=" + profilePath);
+                options.AddArgument("--user-data-dir=" + profilePath + "/" + profile.Fid);
                 options.AddArgument("profile-directory=100002333178177");
                 chromeDriver = new ChromeDriver(options);
                 chromeDriver.Url = "https://business.facebook.com/home/accounts?business_id=143842403881175";

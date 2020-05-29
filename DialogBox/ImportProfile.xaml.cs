@@ -104,7 +104,7 @@ namespace fbtool.DialogBox
                 string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
 
                 ChromeOptions options = new ChromeOptions();
-                options.AddArgument("--user-data-dir=" + profilePath);
+                options.AddArgument("--user-data-dir=" + profilePath + "/" + viadetail[0]);
                 options.AddArgument("profile-directory=" + viadetail[0]);
                 options.AddArgument("disable-infobars");
                 options.AddArgument("--disable-extensions");
