@@ -128,7 +128,11 @@ namespace fbtool.DialogBox
                     waitLoading();
                 }
                 // Check success
-
+                string curUrl = chromeDriver.Url;
+                if (!curUrl.Contains("business.facebook.com/checkpoint"))
+                {
+                    status = 1;
+                }
                 await saveToDbAsync(viadetail[0], viadetail[1], viadetail[2], status);
             }
         }
