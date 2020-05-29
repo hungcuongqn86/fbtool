@@ -92,7 +92,7 @@ namespace fbtool.DialogBox
         private async void addVia(string line)
         {
             string[] viadetail = line.Split('|');
-            short status = 0;
+            short status = 1;
             if (viadetail.Length == 3)
             {
                 if (chromeDriver != null)
@@ -129,9 +129,9 @@ namespace fbtool.DialogBox
                 }
                 // Check success
                 string curUrl = chromeDriver.Url;
-                if (!curUrl.Contains("business.facebook.com/checkpoint"))
+                if (curUrl.Contains("business.facebook.com/checkpoint"))
                 {
-                    status = 1;
+                    status = 0;
                 }
                 await saveToDbAsync(viadetail[0], viadetail[1], viadetail[2], status);
             }
