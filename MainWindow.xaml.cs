@@ -760,9 +760,9 @@ namespace fbtool
         {
             try
             {
-                ChromeOptions options = new ChromeOptions();
+                /*ChromeOptions options = new ChromeOptions();
                 string profilePath = ConfigurationManager.AppSettings["ProfilePath"].ToString();
-                options.AddArgument("--user-data-dir=" + profilePath + "/" + profile.Fid);
+                options.AddArgument("--user-data-dir=" + profilePath + "/100002333178177");
                 options.AddArgument("profile-directory=100002333178177");
                 chromeDriver = new ChromeDriver(options);
                 chromeDriver.Url = "https://business.facebook.com/home/accounts?business_id=143842403881175";
@@ -786,7 +786,7 @@ namespace fbtool
                 chromeDriver.Url = "https://business.facebook.com/settings/ad-accounts?business_id=" + businessId;
                 chromeDriver.Navigate();
                 waitLoading();
-                System.Threading.Thread.Sleep(5000);
+                System.Threading.Thread.Sleep(5000);*/
 
                 // get main id
                 string serverName = ConfigurationManager.AppSettings["ServerName"].ToString();
