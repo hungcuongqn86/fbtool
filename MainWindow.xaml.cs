@@ -413,9 +413,13 @@ namespace fbtool
             dlg.ShowDialog();
             if (dlg.DialogResult == true)
             {
-                if (dlg.Data.Count > 0)
+                if ((dlg.Data.Count > 0) && (_returnedLinks.Count >= dlg.Data.Count))
                 {
                     AddBm(sender, dlg.Data.Count);
+                }
+                else
+                {
+                    MessageBox.Show("Số lượng link phải lớn hơn 0 và nhỏ hơn hoặc bằng " + _returnedLinks.Count.ToString());
                 }
             }
         }
@@ -535,7 +539,7 @@ namespace fbtool
 
                 System.Threading.Thread.Sleep(10000);
                 waitLoading();
-                AddAdAccount();
+                await AddAdAccount();
             }
             catch
             {
@@ -543,7 +547,7 @@ namespace fbtool
             }
         }
 
-        private void AddAdAccount()
+        private async Task AddAdAccount()
         {
             try
             {
@@ -661,7 +665,7 @@ namespace fbtool
                                                         allAccountRadioButton.First().Click();
                                                         System.Threading.Thread.Sleep(3000);
                                                         waitLoading();
-                                                        AdAccountSetRole();
+                                                        await AdAccountSetRole();
                                                     }
                                                 }
                                             }
@@ -679,7 +683,7 @@ namespace fbtool
             }
         }
 
-        private void AdAccountSetRole()
+        private async Task AdAccountSetRole()
         {
             try
             {
@@ -746,7 +750,7 @@ namespace fbtool
                             waitLoading();
                         }
 
-                        ShareToMainAccount();
+                        await ShareToMainAccount();
                     }
                 }
             }
@@ -756,7 +760,7 @@ namespace fbtool
             }
         }
 
-        private async void ShareToMainAccount()
+        private async Task ShareToMainAccount()
         {
             try
             {
